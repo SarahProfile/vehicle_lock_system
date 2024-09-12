@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'نظام حجز المركبات'),
 
     /*
     |--------------------------------------------------------------------------
@@ -83,7 +83,9 @@ return [
     |
     */
 
-    'locale' => 'en',
+    // 'locale' => 'en',
+    'locale' => 'ar',
+
 
     /*
     |--------------------------------------------------------------------------
@@ -184,5 +186,6 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
+
 
 ];
