@@ -212,31 +212,34 @@
     }
 </script>
 <script>
-    // JavaScript for enter_date filter toggle
-    let enterDateOrder = "{{ request('enter_date_order') }}";
-    function toggleDateOrder() {
-        if (!enterDateOrder || enterDateOrder === 'asc') {
-            enterDateOrder = 'desc';
-        } else if (enterDateOrder === 'desc') {
-            enterDateOrder = '';
-        } else {
-            enterDateOrder = 'asc';
-        }
-        window.location.href = `?enter_date_order=${enterDateOrder}`;
-    }
-
-    // JavaScript for vehicle_status filter toggle
-    let vehicleStatusOrder = "{{ request('vehicle_status_order') }}";
+     // JavaScript for vehicle_status filter toggle
+     let vehicleStatusOrder = "{{ request('vehicle_status_order') }}";
     function toggleStatusOrder() {
         if (!vehicleStatusOrder || vehicleStatusOrder === 'out_first') {
             vehicleStatusOrder = 'in_first';
         } else if (vehicleStatusOrder === 'in_first') {
-            vehicleStatusOrder = '';
+            vehicleStatusOrder = 'out_first';
         } else {
             vehicleStatusOrder = 'out_first';
         }
         window.location.href = `?vehicle_status_order=${vehicleStatusOrder}`;
     }
+    // JavaScript for enter_date filter toggle
+     // JavaScript for enter_date filter toggle
+     let enterDateOrder = "{{ request('enter_date_order') }}";
+    function toggleDateOrder() {
+        if (!enterDateOrder || enterDateOrder === 'desc') {
+            enterDateOrder = 'asc';
+        } else if (enterDateOrder === 'desc') {
+            enterDateOrder = '';
+        } else {
+            enterDateOrder = 'desc';
+        }
+        window.location.href = `?enter_date_order=${enterDateOrder}`;
+    }
+
+
+   
 </script>
 
 <script>

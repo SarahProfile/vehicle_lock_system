@@ -16,7 +16,7 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    @vite('resources/css/app.css')
+    {{-- @vite('resources/css/app.css') --}}
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/6.5.95/css/materialdesignicons.min.css">
 
 </head>
@@ -24,7 +24,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="{{ route('home') }}" >
                     {{-- {{ config('app.name', 'نظام حجز المركبات') }} --}}
                     نظام حجز المركبات
                 </a>

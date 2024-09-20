@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
@@ -27,9 +28,9 @@ class HomeController extends Controller
         $search = $request->input('search');
         $enterDate = $request->input('enter_date');
         $lockLoction = $request->input('lock_location');
-        $vehicleStatusOrder = $request->input('vehicle_status_order'); // to manage the status order
-        $enterDateOrder = $request->input('enter_date_order'); // to manage the enter date sorting
-        $locationOrder = $request->input('location_order'); // to manage lock location sorting
+        $vehicleStatusOrder = $request->input('vehicle_status_order'); // Manage the status order
+        $enterDateOrder = $request->input('enter_date_order', 'desc'); // Manage enter date sorting
+        $locationOrder = $request->input('location_order'); // Manage lock location sorting
     
         // Fetch distinct lock locations from the vehicles table
         $lockLocations = Vehicle::select('lock_location')->distinct()->pluck('lock_location');
@@ -47,15 +48,6 @@ class HomeController extends Controller
                 $query->where('lock_location', 'like', "%{$lockLoction}%");
             });
     
-        // Handle the sorting for the enter_date field
-        if ($enterDateOrder) {
-            if ($enterDateOrder === 'desc') {
-                $vehicles->orderBy('enter_date', 'desc');
-            } elseif ($enterDateOrder === 'asc') {
-                $vehicles->orderBy('enter_date', 'asc');
-            }
-        }
-    
         // Handle the vehicle status filter logic
         if ($vehicleStatusOrder) {
             if ($vehicleStatusOrder === 'out_first') {
@@ -63,6 +55,11 @@ class HomeController extends Controller
             } elseif ($vehicleStatusOrder === 'in_first') {
                 $vehicles->orderByRaw("FIELD(vehicle_status, 'موجودة', 'خرجت')");
             }
+        }
+    
+        // Handle the sorting for the enter_date field
+        if ($enterDateOrder) {
+            $vehicles->orderBy('enter_date', $enterDateOrder); // Sorting by enter date after vehicle status
         }
     
         // Handle the lock location sorting

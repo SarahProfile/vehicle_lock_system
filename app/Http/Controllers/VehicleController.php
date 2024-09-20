@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use App\Models\Vehicle;
@@ -16,7 +17,7 @@ class VehicleController extends Controller
         $enterDate = $request->input('enter_date');
         $lockLoction = $request->input('lock_location');
         $vehicleStatusOrder = $request->input('vehicle_status_order'); // to manage the status order
-        $enterDateOrder = $request->input('enter_date_order'); // to manage the enter date sorting
+    $enterDateOrder = $request->input('enter_date_order', 'desc'); // Default to 'desc' for new to old
         $locationOrder = $request->input('location_order'); // to manage lock location sorting
     
         // Fetch distinct lock locations from the vehicles table
@@ -36,6 +37,7 @@ class VehicleController extends Controller
             });
     
         // Handle the sorting for the enter_date field
+        
         if ($enterDateOrder) {
             if ($enterDateOrder === 'desc') {
                 $vehicles->orderBy('enter_date', 'desc');
@@ -106,14 +108,14 @@ class VehicleController extends Controller
     $validatedData = $request->validate([
         'vehicle_center' => 'required',
         'enter_date' => 'required',
-        'exit_date' => 'required', // Add validation for exit_date
+        // 'exit_date' => 'required', // Add validation for exit_date
         'lock_location' => 'required',
         'lock_area' => 'required',
         'vehicle_number' => 'required',
         'vehicle_model' => 'required',
         'chassis_number' => 'required',
         'vehicle_type' => 'required',
-        'exit_date'=>'required',
+        // 'exit_date'=>'required',
         'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', 
     ]);
 
@@ -199,7 +201,14 @@ private function calculateVehiclePrice($vehicle)
     $enter_date = new \DateTime($vehicle->enter_date);
     $exit_date = new \DateTime($vehicle->exit_date);
     $interval = $enter_date->diff($exit_date);
+
+    // Calculate total hours
     $hours = ($interval->days * 24) + $interval->h;
+    
+    // If there are minutes or hours is 0, round up to 1 hour
+    if ($hours === 0 || $interval->i > 0) {
+        $hours += 1;
+    }
 
     // Set price based on vehicle_type and lock_area
     $price_per_hour = 0;
@@ -209,20 +218,24 @@ private function calculateVehiclePrice($vehicle)
         } elseif ($vehicle->lock_area === 'خارج المنطقة') {
             $price_per_hour = 800;
         }
-    } elseif ($vehicle->vehicle_type === 'كبيرة' && $vehicle->lock_area === 'خارج المنطقة') {
-        $price_per_hour = 1500;
+    } elseif ($vehicle->vehicle_type === 'كبيرة') {
+        if ($vehicle->lock_area === 'داخل المنطقة') {
+            $price_per_hour = 1000;
+        } elseif ($vehicle->lock_area === 'خارج المنطقة') {
+            $price_per_hour = 1500;
+        }
+    } elseif ($vehicle->vehicle_type === 'المعدات') {
+        if ($vehicle->lock_area === 'داخل المنطقة') {
+            $price_per_hour = 2000;
+        } elseif ($vehicle->lock_area === 'خارج المنطقة') {
+            $price_per_hour = 2700;
+        }
     }
- elseif ($vehicle->vehicle_type === 'كبيرة' && $vehicle->lock_area === 'داخل المنطقة') {
-    $price_per_hour = 1000;
-}
-elseif ($vehicle->vehicle_type === 'المعدات' && $vehicle->lock_area === 'داخل المنطقة') {
-    $price_per_hour = 2000;
-}
-elseif ($vehicle->vehicle_type === 'المعدات' && $vehicle->lock_area === 'خارج المنطقة') {
-    $price_per_hour = 2700;
-}
-    // Total price
-    return ($price_per_hour * $hours) + (2 * $hours);
+
+    $total_price_befor_vat = ($price_per_hour) + (2 * $hours);
+    $total_price_after_vat = ($total_price_befor_vat) + (0.15 * $total_price_befor_vat);
+    // Total price (including an additional 2 per hour fee)
+    return $total_price_after_vat;
 }
 
 public function exitVehicle(Request $request, $id)
@@ -271,11 +284,19 @@ public function update(Request $request, $id)
         'vehicle_model' => 'required',
         'chassis_number' => 'required',
         'vehicle_type' => 'required',
+        'vehicle_status' => 'nullable',
+        'exit_date' => 'nullable|date', // Add exit_date validation
         'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validation for multiple images
     ]);
 
     // Update the vehicle data
     $vehicle->update($validatedData);
+
+    // Calculate the price only if exit_date is provided
+    if (!empty($vehicle->exit_date)) {
+        $price = $this->calculateVehiclePrice($vehicle);
+        $vehicle->update(['vehicle_price' => $price]); // Update vehicle price
+    }
 
     // Handle multiple image uploads
     if ($request->hasFile('vehicle_images')) {

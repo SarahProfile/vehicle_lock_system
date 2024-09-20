@@ -35,7 +35,11 @@
                 @if($vehicle->vehicle_status == 'خرجت')
                 <div class="form-group">
                     <label for="vehicle_status">حالة المركبة</label>
-                    <input type="text" name="vehicle_status" class="form-control" value="خرجت" readonly>
+                   
+                    <select name="vehicle_status" class="form-select">
+                        <option value="خرجت" @if($vehicle->vehicle_status =='خرجت') selected @endif>خرجت</option>
+                        <option value="موجودة" @if($vehicle->vehicle_status =='موجودة') selected @endif>موجودة</option>
+                    </select>
                 </div>
                 @endif
                 <br>
@@ -45,7 +49,7 @@
                 </div>
                 <br>
                 <div class="form-group">
-                    <label for="lock_area">مكان الحجز</label>
+                    <label for="lock_area">مكان السحب</label>
                     <select name="lock_area" class="form-select">
                         <option value="داخل المنطقة" @if($vehicle->lock_area == 'داخل المنطقة') selected @endif>داخل المنطقة</option>
                         <option value="خارج المنطقة" @if($vehicle->lock_area == 'خارج المنطقة') selected @endif>خارج المنطقة</option>
@@ -150,7 +154,10 @@
             const exitDate = new Date(exitDateInput.value);
 
             // احسب الفرق بالوقت (بالساعات)
-            const timeDifference = (exitDate - enterDate) / (1000 * 60 * 60);
+            let timeDifference = (exitDate - enterDate) / (1000 * 60 * 60);
+
+            // إذا كان الفرق أقل من ساعة، نعتبره ساعة كاملة
+            timeDifference = Math.ceil(timeDifference);
 
             // احسب السعر بناءً على نوع المركبة ومكان الحجز
             let price = 0;
@@ -158,23 +165,28 @@
             const lockArea = "{{ $vehicle->lock_area }}";
 
             if (vehicleType === 'صغيرة' && lockArea === 'داخل المنطقة') {
-                price = (timeDifference * 500) + (timeDifference * 2);
+                price = (500) + (timeDifference * 2);
+                price_after_vat = price + (price * 0.15);
             } else if (vehicleType === 'صغيرة' && lockArea === 'خارج المنطقة') {
-                price = (timeDifference * 800) + (timeDifference * 2);
+                price = (800) + (timeDifference * 2);
+                price_after_vat = price + (price * 0.15);
             } else if (vehicleType === 'كبيرة' && lockArea === 'خارج المنطقة') {
-                price = (timeDifference * 1500) + (timeDifference * 2) ;
+                price = (1500) + (timeDifference * 2);
+                price_after_vat = price + (price * 0.15);
+            } else if (vehicleType === 'كبيرة' && lockArea === 'داخل المنطقة') {
+                price = (1000) + (timeDifference * 2);
+                price_after_vat = price + (price * 0.15);
+            } else if (vehicleType === 'المعدات' && lockArea === 'داخل المنطقة') {
+                price = (2000) + (timeDifference * 2);
+                price_after_vat = price + (price * 0.15);
+            } else if (vehicleType === 'المعدات' && lockArea === 'خارج المنطقة') {
+                price = (2700) + (timeDifference * 2);
+                price_after_vat = price + (price * 0.15);
             }
-         else if (vehicleType === 'كبيرة' && lockArea === 'داخل المنطقة') {
-                price = (timeDifference * 1000) + (timeDifference * 2);
-            }
-            else if (vehicleType === 'المعدات' && lockArea === 'داخل المنطقة') {
-                price = (timeDifference * 2000) + (timeDifference * 2);
-            }
-            else if (vehicleType === 'المعدات' && lockArea === 'خارج المنطقة') {
-                price = (timeDifference * 2700) + (timeDifference * 2);
-            }
+
             // عرض السعر في حقل vehicle_price
-            priceInput.value = price.toFixed(2);
+            priceInput.value = price_after_vat.toFixed(2);
         });
     });
 </script>
+

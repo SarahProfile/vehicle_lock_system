@@ -31,6 +31,7 @@
                     <label for="enter_date">تاريخ وزمن دخول المركبة</label>
                     <input type="datetime-local" name="enter_date" class="form-control" required>
                 </div>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
                 <br>
                 <div class="form-group">
                     <label for="lock_location">موقع الرفع</label>
@@ -39,7 +40,7 @@
                 <br>
                 <div class="form-group">
                     <select name="lock_area" class="form-select">
-                        <option value="مكان الحجز" selected>مكان الحجز</option>
+                        <option value="مكان الحجز" selected>مكان السحب</option>
                         <option value="داخل المنطقة">داخل المنطقة</option>
                         <option value="خارج المنطقة">خارج المنطقة</option>
                     </select>
@@ -102,3 +103,10 @@
 </div>
 @endif
 @endsection
+<script>
+    flatpickr("#enter_date", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        position: "right" // Calendar dropdown on the right
+    });
+</script>

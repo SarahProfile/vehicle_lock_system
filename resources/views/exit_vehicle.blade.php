@@ -21,8 +21,9 @@
             <input type="text" id="vehicle_price" class="form-control" value="سيتم حساب السعر تلقائياً" readonly>
         </div>
 <br>
+<a href="{{ route('home') }}" class="btn btn-primary" >الرجوع</a>
         <button type="submit" class="btn btn-success">إخراج المركبة</button>
-        <a href="{{ route('home') }}" class="btn btn-primary" >الرجوع</a>
+       
     </form>
 </div>
 
@@ -32,7 +33,11 @@
         const enterDate = new Date("{{ $vehicle->enter_date }}"); // تاريخ الدخول من قاعدة البيانات
 
         if (exitDate > enterDate) {
-            const hours = Math.abs(exitDate - enterDate) / 36e5; // حساب الساعات بين تاريخ الدخول والخروج
+            // حساب الساعات بين تاريخ الدخول والخروج
+            let hours = Math.abs(exitDate - enterDate) / 36e5;
+
+            // إذا كان الفرق أقل من ساعة، نعتبره ساعة كاملة
+            hours = Math.ceil(hours);
 
             let pricePerHour = 0;
 
@@ -43,24 +48,28 @@
                 } else if ("{{ $vehicle->lock_area }}" === 'خارج المنطقة') {
                     pricePerHour = 800;
                 }
-            } else if ("{{ $vehicle->vehicle_type }}" === 'كبيرة' && "{{ $vehicle->lock_area }}" === 'خارج المنطقة') {
-                pricePerHour = 1500;
+            } else if ("{{ $vehicle->vehicle_type }}" === 'كبيرة') {
+                if ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') {
+                    pricePerHour = 1000;
+                } else if ("{{ $vehicle->lock_area }}" === 'خارج المنطقة') {
+                    pricePerHour = 1500;
+                }
+            } else if ("{{ $vehicle->vehicle_type }}" === 'المعدات') {
+                if ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') {
+                    pricePerHour = 2000;
+                } else if ("{{ $vehicle->lock_area }}" === 'خارج المنطقة') {
+                    pricePerHour = 2700;
+                }
             }
-         else if ("{{ $vehicle->vehicle_type }}" === 'كبيرة' && "{{ $vehicle->lock_area }}" === 'داخل المنطقة') {
-                pricePerHour = 1000;
-            }
-            else if ("{{ $vehicle->vehicle_type }}" === 'المعدات' && "{{ $vehicle->lock_area }}" === 'داخل المنطقة') {
-                pricePerHour = 2000;
-            }
-            else if ("{{ $vehicle->vehicle_type }}" === 'المعدات' && "{{ $vehicle->lock_area }}" === 'خارج المنطقة') {
-                pricePerHour = 2700;
-            }
-            const totalPrice = (pricePerHour * hours) + (2 * hours);
 
-            document.getElementById('vehicle_price').value = totalPrice.toFixed(2) + " ريال";
+            // حساب السعر الإجمالي
+            const totalPrice = (pricePerHour) + (2 * hours);
+            const totalPriceAfterVat = (totalPrice) +(0.15 * totalPrice)
+            document.getElementById('vehicle_price').value = totalPriceAfterVat.toFixed(2) + " ريال";
         } else {
             alert('تاريخ الخروج يجب أن يكون بعد تاريخ الدخول');
         }
     });
 </script>
+
 @endsection
