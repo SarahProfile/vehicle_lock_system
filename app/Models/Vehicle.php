@@ -8,7 +8,7 @@ class Vehicle extends Model
 {
     // Specify the fields that are mass assignable
     protected $fillable = [
-        'vehicle_center', 
+        // 'vehicle_center', 
         'enter_date', 
         'exit_date',  // Add exit_date
         'lock_location', 
@@ -18,7 +18,8 @@ class Vehicle extends Model
         'chassis_number', 
         'vehicle_type',
         'vehicle_price' ,// Add vehicle_price
-        'vehicle_status'
+        'vehicle_status',
+        'vehicle_center_id'
     ];
 
     public function calculatePrice($exitDate)
@@ -63,4 +64,11 @@ class Vehicle extends Model
     {
         return $this->hasMany(VehicleImage::class);
     }
+// In the Vehicle model (Vehicle.php)
+public function vehicleCenter()
+{
+    return $this->belongsTo(VehicleCenter::class, 'vehicle_center_id');
 }
+
+}
+

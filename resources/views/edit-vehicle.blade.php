@@ -9,9 +9,36 @@
                     <div class="card" style="padding: 10px">
 
             <h2>تسجيل المركبة</h2>
-            <form action="{{ route('vehicle.update' ,['id'=>$vehicle->id])  }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('vehicle.update', ['id' => $vehicle->id]) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
+                    {{-- <label for="vehicle_center">مركز المركبة</label>
+                    <select name="vehicle_center" class="form-select" required>
+                        <option value="" disabled selected>اختر مركز المركبة</option>
+                        @foreach($lock_centers as $center)
+                            <option value="{{ $center->id }}" @if($vehicle->vehicle_center == $center->id) selected @endif>{{ $center->name }}</option>
+                        @endforeach
+                    </select> --}}
+                    <div class="form-group">
+                        <label for="vehicle_center">مركز المركبة</label>
+                        <select class="form-select" name="vehicle_center_id">
+                            @foreach($vehicleCenters as $center) 
+                            @if(auth::user()->type=='مشرف المدينة')
+                            <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif> @if($center->name =='المدينة') {{ $center->name }} @endif </option>
+                            @endif
+                            @if(auth::user()->type=='مشرف الشرقية')
+                            <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif> @if($center->name =='المنطقة الشرقية'){{  $center->name}} @endif </option>
+                            @endif
+                            @if(auth::user()->type=='مشرف عام')
+                            <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif>{{ $center->name }}</option>
+                            @endif
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <br>
+                {{-- <div class="form-group">
                     <select name="vehicle_center" class="form-select">
                         @if(auth::user()->type=='مشرف المدينة')
                         <option  value="{{$vehicle->vehicle_center}}" selected>المدينة</option>
@@ -24,7 +51,7 @@
                         <option value="{{$vehicle->lock_loction}}" >المنطقة الشرقية</option>
                         @endif
                     </select>
-                </div>
+                </div> --}}
                 
                 <br>
                 <div class="form-group">

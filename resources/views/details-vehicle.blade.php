@@ -4,10 +4,16 @@
 <div class="container">
     <h2>بيانات المركبة</h2>
     <table class="table table-bordered">
-        <tr>
+        {{-- <tr>
             <th>مركز الحجز</th>
             <td>{{ $vehicle->vehicle_center }}</td>
+        </tr> --}}
+        <tr>
+            <th>مركز الحجز</th>
+            <td>{{ $vehicle->vehicleCenter->name }}</td>
         </tr>
+   
+
         <tr>
             <th>تاريخ وزمن دخول المركبة</th>
             <td>{{ $vehicle->enter_date }}</td>

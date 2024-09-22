@@ -12,6 +12,27 @@
             <form action="{{ route('vehicle.add' ) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
+                   
+                    <div class="form-group">
+                        <label for="vehicle_center">مركز المركبة</label>
+                        <select class="form-select" name="vehicle_center_id">
+                            @foreach($vehicleCenters as $center) 
+                            @if(auth::user()->type=='مشرف المدينة')
+                            <option value="{{ $center->id }}" > @if($center->id =='4') {{ $center->name }} @endif </option>
+                            @endif
+                            @if(auth::user()->type=='مشرف الشرقية')
+                            <option value="{{ $center->id }}" > @if($center->id =='7') {{ $center->name }} @endif </option>
+                            @endif
+                            @if(auth::user()->type=='مشرف عام')
+                            <option value="{{ $center->id }}">{{ $center->name }}</option>
+                            @endif
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <br>
+                {{-- <div class="form-group">
                     <select name="vehicle_center" class="form-select">
                         @if(auth::user()->type=='مشرف المدينة')
                         <option value="المدينة" selected>المدينة</option>
@@ -26,7 +47,7 @@
                     </select>
                 </div>
                 
-                <br>
+                <br> --}}
                 <div class="form-group">
                     <label for="enter_date">تاريخ وزمن دخول المركبة</label>
                     <input type="datetime-local" name="enter_date" class="form-control" required>

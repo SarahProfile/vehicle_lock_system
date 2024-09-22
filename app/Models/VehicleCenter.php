@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class VehicleCenter extends Model 
 {
 
-    protected $table = 'vehicle_centers';
+    protected $table = 'lock_centers';
     protected $fillable = ['vehicle_id','center_id'];
     public $timestamps = true;
-    public function centers()
+    public function vehicles()
     {
-        return $this->hasMany(LockCenter::class);
+        return $this->hasMany(Vehicle::class);
     }
+    
 
 }

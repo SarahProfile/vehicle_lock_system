@@ -78,7 +78,8 @@
                                             </tr>
                                         </thead>
                                         @foreach($vehicles as $vehicle)
-                                        @if($vehicle->vehicle_center =='المدينة')
+                                        @if ($vehicle->vehicleCenter->name =='المدينة')
+                                        {{-- @if($vehicle->vehicle_center =='المدينة') --}}
                                         <tbody>
                                             {{-- @foreach($vehicles as $vehicle) --}}
                                                 <tr>
@@ -149,7 +150,8 @@
                                                      </tr>
                                                  </thead>
                                                  @foreach($vehicles as $vehicle)
-                                                 @if($vehicle->vehicle_center == 'المنطقة الشرقية')
+                                                 {{-- @if($vehicle->vehicle_center == 'المنطقة الشرقية') --}}
+                                                 @if ($vehicle->vehicleCenter->name =='المنطقة الشرقية')
                                                  <tbody>
                                                      {{-- @foreach($vehicles as $vehicle) --}}
                                                          <tr>

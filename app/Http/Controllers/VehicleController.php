@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use App\Models\Vehicle;
+use App\Models\VehicleCenter;
 
 class VehicleController extends Controller 
 {
@@ -85,18 +86,24 @@ class VehicleController extends Controller
 
     public function showFull($id)
     {
-        $vehicle = Vehicle::find($id);
-
+        // Fetch the vehicle along with its related vehicle center
+        $vehicle = Vehicle::with('vehicleCenter')->find($id);
+    
         if (!$vehicle) {
             return redirect('/admin/vehicles')->with('error', 'Vehicle not found.');
         }
-
+    
         return view('details-vehicle', compact('vehicle'));
     }
+    
 
     public function create()
     {
-        return view('add-vehicle');
+         // Assuming you have a VehicleCenter model
+    $vehicleCenters = VehicleCenter::all(); // Fetch all centers
+
+    return view('add-vehicle', compact('vehicleCenters'));
+       
     }
 
     /**
@@ -106,7 +113,9 @@ class VehicleController extends Controller
 {
     // Validate the form data
     $validatedData = $request->validate([
-        'vehicle_center' => 'required',
+        
+        'vehicle_center_id' => 'required|exists:lock_centers,id', // Ensure vehicle center is valid
+
         'enter_date' => 'required',
         // 'exit_date' => 'required', // Add validation for exit_date
         'lock_location' => 'required',
@@ -273,10 +282,11 @@ public function calculatePrice(Request $request, $id)
 public function update(Request $request, $id)
 {
     $vehicle = Vehicle::find($id);
+    $vehicleCenters = VehicleCenter::all();
 
     // Validate the form data
     $validatedData = $request->validate([
-        'vehicle_center' => 'required',
+        'vehicle_center_id' => 'required|exists:lock_centers,id', // Validate vehicle center
         'enter_date' => 'required',
         'lock_location' => 'required',
         'lock_area' => 'required',
@@ -285,17 +295,17 @@ public function update(Request $request, $id)
         'chassis_number' => 'required',
         'vehicle_type' => 'required',
         'vehicle_status' => 'nullable',
-        'exit_date' => 'nullable|date', // Add exit_date validation
-        'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validation for multiple images
+        'exit_date' => 'nullable|date',
+        'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
     // Update the vehicle data
     $vehicle->update($validatedData);
-
-    // Calculate the price only if exit_date is provided
+    // $vehicleCenters->update($validatedData);
+    // Calculate the price if the exit date is provided
     if (!empty($vehicle->exit_date)) {
         $price = $this->calculateVehiclePrice($vehicle);
-        $vehicle->update(['vehicle_price' => $price]); // Update vehicle price
+        $vehicle->update(['vehicle_price' => $price]);
     }
 
     // Handle multiple image uploads
@@ -304,7 +314,6 @@ public function update(Request $request, $id)
             $imageName = time() . '_' . $image->getClientOriginalName();
             $image->move(public_path('images'), $imageName);
 
-            // Save each image's path in the vehicle_images table
             $vehicle->images()->create([
                 'image_path' => $imageName
             ]);
@@ -314,7 +323,6 @@ public function update(Request $request, $id)
     return redirect()->route('home')->with('success', 'Vehicle updated successfully.');
 }
 
-    
 
 
     /**
@@ -323,8 +331,14 @@ public function update(Request $request, $id)
     public function edit($id)
     {
         $vehicle = Vehicle::find($id);
-        return view('edit-vehicle', ['vehicle' => $vehicle]);
+        $vehicleCenters = VehicleCenter::all(); // Fetch all vehicle centers
+        
+        return view('edit-vehicle', [
+            'vehicle' => $vehicle,
+            'vehicleCenters' => $vehicleCenters, // Pass the vehicle centers to the view
+        ]);
     }
+    
 
     /**
      * Update the specified vehicle in storage.
