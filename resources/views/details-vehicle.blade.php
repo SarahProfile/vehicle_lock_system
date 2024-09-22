@@ -116,14 +116,14 @@
             </div>
         </tr>
     </table>
-    <a href="{{ route('home') }}" class="btn btn-primary" >الرجوع</a>
+    <a href="{{ route('home') }}" class="btn btn-primary" style="background-color: #FC3D39; border-color:#E33437" >الرجوع</a>
     @if(auth::user()->type!='مشاهد' && auth::user()->type!='مشاهد الشرقية' && auth::user()->type!='مشاهدالمدينة')
     <td class="table-action">
         <a href="{{ route('vehicle.edit', $vehicle->id) }}" class="btn btn-primary" >تعديل</a>
     </td>
     @if($vehicle->vehicle_status != 'خرجت')
     <td class="table-action">
-        <a href="{{ route('vehicle.exit', $vehicle->id) }}" class="btn btn-primary" >إخراج المركبة</a>
+        <a href="{{ route('vehicle.exit', $vehicle->id) }}" class="btn btn-primary"  style="background-color: #46C263; border-color:#53D769">إخراج المركبة</a>
     </td>
     @endif
     @endif

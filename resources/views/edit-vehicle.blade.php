@@ -143,7 +143,7 @@
                     <input type="file" accept="image/*" name="vehicle_images[]" class="form-control" multiple>
                 </div>
                 <br>
-                <a href="{{ route('home') }}" class="btn btn-primary">الرجوع</a>
+                <a href="{{ route('home') }}" class="btn btn-primary" style="background-color: #FC3D39; border-color:#E33437">الرجوع</a>
                 <button type="submit" class="btn btn-primary">تحديث تسجيل المركبة </button>
                 @if($errors->any())
     <div class="alert alert-danger">

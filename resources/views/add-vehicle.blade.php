@@ -101,8 +101,8 @@
                 
                 <br>
                 <br>
-                <a href="{{ route('home') }}" class="btn btn-primary">الرجوع</a>
-                <button type="submit" class="btn btn-primary">تسجيل المركبة</button>
+                <a href="{{ route('home') }}" class="btn btn-primary" style="background-color: #FC3D39; border-color:#E33437">الرجوع</a>
+                <button type="submit" class="btn btn-primary" style="background-color:#46C263; border-color:#53D769">تسجيل المركبة</button>
                 @if($errors->any())
                                 <div class="alert alert-danger">
                                     <ul>

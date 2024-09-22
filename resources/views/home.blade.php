@@ -22,7 +22,9 @@
                                 <div class="row mb-2">
                                     @if(auth::user()->type!='مشاهدالمدينة' && auth::user()->type!='مشاهد الشرقية' && auth::user()->type!='مشاهد')
                                     <div class="col-sm-5">
-                                        <a href="/admin/vehicles/create" class="btn btn-danger mb-2"><i class="mdi mdi-plus-circle me-2"></i>تسجيل المركبة</a>
+                                        <a href="/admin/vehicles/create" class="btn btn-danger mb-2" style="    background-color: #E6E6E6;
+    color: black;
+    border-color: #F8F8F8;"><i class="mdi mdi-plus-circle me-2"></i>تسجيل المركبة</a>
                                     </div>
                                     @endif
                                 </div>
@@ -30,7 +32,7 @@
                                 <form method="GET"  class="mb-4">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="ابحث بجزء من رقم اللوحة أو رقم الهيكل" value="{{ request('search') }}">
-                                        <button type="submit" class="btn btn-primary" style="margin-right: 10px;">بحث</button>  <a href="{{ route('home') }}" class="btn btn-primary" style="margin-right: 10px;">الرجوع</a>
+                                        <button type="submit" class="btn btn-primary" style="margin-right: 10px; border-radius:5px;">بحث</button>  <a href="{{ route('home') }}" class="btn btn-primary" style="margin-right: 10px;border-radius:5px;background-color: #FC3D39; border-color:#E33437" >الرجوع</a>
                                     </div>
                                 </form>
                                 
@@ -73,7 +75,7 @@
                                                         <i class="mdi mdi-filter" style="font-size: 18px;"></i>
                                                     </button>
                                                 </th>
-                                                <th style="width: 85px;">التفاصيل</th>
+                                                <th   style="width: 85px; ">التفاصيل</th>
                                     
                                             </tr>
                                         </thead>
@@ -90,7 +92,7 @@
                                                     <td>{{ $vehicle->lock_location }}</td>
                                                     <td>{{ $vehicle->vehicle_status}}</td>
                                                     <td class="table-action">
-                                                        <a href="{{ route('vehicle.showFull', $vehicle->id) }}" class="badge bg-success" style="font-size: 20px">التفاصيل</a>
+                                                        <a href="{{ route('vehicle.showFull', $vehicle->id) }}" class="btn btn-primary" style="font-size: 20px">التفاصيل</a>
                                                     </td>
                                                     {{-- @if(auth::user()->type!='مشاهد')
                                                     <td class="table-action">
@@ -146,7 +148,10 @@
                                                                 <i class="mdi mdi-filter" style="font-size: 18px;"></i>
                                                             </button>
                                                         </th>
-                                                         <th style="width: 85px;">التفاصيل</th>
+                                                         <th style="width: 85px;"
+                                                         >التفاصيل 
+                                                         
+                                                        </th>
                                                      </tr>
                                                  </thead>
                                                  @foreach($vehicles as $vehicle)
@@ -162,8 +167,8 @@
                                                              <td>{{ $vehicle->lock_location }}</td>
                                                              <td>{{ $vehicle->vehicle_status}}</td>
                                                              <td class="table-action">
-                                                                 <a href="{{ route('vehicle.showFull', $vehicle->id) }}" class="badge bg-success" style="font-size: 20px">التفاصيل</a>
-                                                             </td>
+                                                                <a href="{{ route('vehicle.showFull', $vehicle->id) }}" class="btn btn-primary" style="font-size: 20px">التفاصيل</a>
+                                                            </td>
                                                              {{-- @if(auth::user()->type!='مشاهد')
                                                              <td class="table-action">
                                                                 <a href="{{ route('vehicle.edit', $vehicle->id) }}" class="badge bg-success" style="font-size: 20px">تعديل</a>

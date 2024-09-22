@@ -17,12 +17,12 @@
         </div>
 
         <div class="form-group">
-            <label for="vehicle_price">سعر المركبة</label>
+            <label for="vehicle_price">سعر الاخراج</label>
             <input type="text" id="vehicle_price" class="form-control" value="سيتم حساب السعر تلقائياً" readonly>
         </div>
 <br>
-<a href="{{ route('home') }}" class="btn btn-primary" >الرجوع</a>
-        <button type="submit" class="btn btn-success">إخراج المركبة</button>
+<a href="{{ route('home') }}" class="btn btn-primary" style="background-color: #FC3D39; border-color:#E33437">الرجوع</a>
+        <button type="submit" class="btn btn-success" style="background-color: #46C263; border-color:#53D769">إخراج المركبة</button>
        
     </form>
 </div>
