@@ -21,7 +21,7 @@
                     </select> --}}
                     <div class="form-group">
                         <label for="vehicle_center">مركز المركبة</label>
-                        <select class="form-select" name="vehicle_center_id">
+                        <select class="form-select" name="vehicle_center_id" id="vehicle_center2">
                             @foreach($vehicleCenters as $center) 
                             @if(auth::user()->type=='مشرف المدينة')
                             <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif> @if($center->name =='المدينة') {{ $center->name }} @endif </option>
@@ -89,17 +89,16 @@
                 </div>
                 <br>
                 <div class="form-group">
-                    {{-- <label for="vehicle_type">نوع المركبة</label>
-                    <input type="text" name="vehicle_type" class="form-control" > --}}
                     <label for="vehicle_type">نوع المركبة</label>
-                    {{-- <input type="text" name="vehicle_type" class="form-control" required> --}}
-                    <select name="vehicle_type" class="form-select">
-                        <option value="نوع المركبة" >نوع المركبة</option>
-                        <option value="صغيرة"   @if($vehicle->vehicle_type == 'صغيرة') selected @endif>صغيرة</option>
-                        <option value="كبيرة"   @if($vehicle->vehicle_type == 'كبيرة') selected @endif>كبيرة</option>
-                        <option value="المعدات" @if($vehicle->vehicle_type == 'المعدات') selected @endif>المعدات</option>
+                    <select name="vehicle_type" class="form-select" id="vehicle_type">
+                        <option value="صغيرة" @if($vehicle->vehicle_type == 'صغيرة') selected @endif>صغيرة</option>
+                        <option value="كبيرة" @if($vehicle->vehicle_type == 'كبيرة') selected @endif>كبيرة</option>
+                        @if(auth::user()->type!='مشرف الشرقية' || auth::user()->type=='مشرف عام')
+                        <option value="المعدات" id="equipment_option2" @if($vehicle->vehicle_type == 'المعدات') selected @endif>المعدات</option>
+                        @endif
                     </select>
                 </div>
+                
                 <br>
                 <div class="form-group">
                     <label for="vehicle_model">موديل المركبة</label>
@@ -217,3 +216,36 @@
     });
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const vehicleCenterSelect = document.getElementById('vehicle_center2');
+        const equipmentOption = document.getElementById('equipment_option2');
+        const userType = "{{ auth()->user()->type }}";
+
+        // تابع لفحص وتغيير الخيارات بناءً على اختيار المستخدم والمركز
+        function handleCenterChange() {
+            const selectedCenter = vehicleCenterSelect.options[vehicleCenterSelect.selectedIndex].text;
+            
+            if (userType === 'مشرف عام' && selectedCenter === 'المنطقة الشرقية') {
+                // إخفاء خيار المعدات
+                equipmentOption.style.display = 'none';
+            } else {
+                // إظهار خيار المعدات إذا لم يكن الشرط متحققاً
+                equipmentOption.style.display = 'block';
+            }
+        }
+
+        // فحص مبدئي عند تحميل الصفحة
+        handleCenterChange();
+
+        // الاستماع لتغيير المركز
+        vehicleCenterSelect.addEventListener('change', handleCenterChange);
+    });
+
+    // تهيئة flatpickr
+    flatpickr("#enter_date", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        position: "right"
+    });
+</script>
