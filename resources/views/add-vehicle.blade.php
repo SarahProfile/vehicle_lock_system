@@ -11,25 +11,24 @@
             <h2>تسجيل المركبة</h2>
             <form action="{{ route('vehicle.add' ) }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="form-group">
-                   
-                    <div class="form-group">
-                        <label for="vehicle_center">مركز المركبة</label>
-                        <select class="form-select" name="vehicle_center_id">
-                            @foreach($vehicleCenters as $center) 
-                            @if(auth::user()->type=='مشرف المدينة')
+                 <!-- اختيار مركز المركبة -->
+                 <div class="form-group">
+                    <label for="vehicle_center">مركز المركبة</label>
+                    <select class="form-select" name="vehicle_center_id" id="vehicle_center">
+                        @foreach($vehicleCenters as $center) 
+                        @if(auth::user()->type=='مشرف المدينة')
                             <option value="{{ $center->id }}" > @if($center->id =='4') {{ $center->name }} @endif </option>
-                            @endif
-                            @if(auth::user()->type=='مشرف الشرقية')
+                        @endif
+                        @if(auth::user()->type=='مشرف الشرقية')
                             <option value="{{ $center->id }}" > @if($center->id =='7') {{ $center->name }} @endif </option>
-                            @endif
-                            @if(auth::user()->type=='مشرف عام')
+                        @endif
+                        @if(auth::user()->type=='مشرف عام')
                             <option value="{{ $center->id }}">{{ $center->name }}</option>
-                            @endif
-                            @endforeach
-                        </select>
-                    </div>
+                        @endif
+                        @endforeach
+                    </select>
                 </div>
+                
 
                 <br>
                 {{-- <div class="form-group">
@@ -72,16 +71,18 @@
                     <input type="text" name="vehicle_number" class="form-control" required>
                 </div>
                 <br>
-                <div class="form-group">
+                 <!-- اختيار نوع المركبة -->
+                 <div class="form-group">
                     <label for="vehicle_type">نوع المركبة</label>
-                    {{-- <input type="text" name="vehicle_type" class="form-control" required> --}}
-                    <select name="vehicle_type" class="form-select">
-                        <option value="نوع المركبة" selected>نوع المركبة</option>
+                    <select name="vehicle_type" class="form-select" id="vehicle_type">
                         <option value="صغيرة">صغيرة</option>
                         <option value="كبيرة">كبيرة</option>
-                        <option value="المعدات">المعدات</option>
+                        @if(auth::user()->type!='مشرف الشرقية' || auth::user()->type=='مشرف عام')
+                        <option value="المعدات" id="equipment_option">المعدات</option>
+                        @endif
                     </select>
                 </div>
+                
                 <br>
                 <div class="form-group">
                     <label for="vehicle_model">موديل المركبة</label>
@@ -103,14 +104,14 @@
                 <a href="{{ route('home') }}" class="btn btn-primary">الرجوع</a>
                 <button type="submit" class="btn btn-primary">تسجيل المركبة</button>
                 @if($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
             </form>
         </div>
                 </div>
@@ -125,9 +126,35 @@
 @endif
 @endsection
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const vehicleCenterSelect = document.getElementById('vehicle_center');
+        const equipmentOption = document.getElementById('equipment_option');
+        const userType = "{{ auth()->user()->type }}";
+
+        // تابع لفحص وتغيير الخيارات بناءً على اختيار المستخدم والمركز
+        function handleCenterChange() {
+            const selectedCenter = vehicleCenterSelect.options[vehicleCenterSelect.selectedIndex].text;
+            
+            if (userType === 'مشرف عام' && selectedCenter === 'المنطقة الشرقية') {
+                // إخفاء خيار المعدات
+                equipmentOption.style.display = 'none';
+            } else {
+                // إظهار خيار المعدات إذا لم يكن الشرط متحققاً
+                equipmentOption.style.display = 'block';
+            }
+        }
+
+        // فحص مبدئي عند تحميل الصفحة
+        handleCenterChange();
+
+        // الاستماع لتغيير المركز
+        vehicleCenterSelect.addEventListener('change', handleCenterChange);
+    });
+
+    // تهيئة flatpickr
     flatpickr("#enter_date", {
         enableTime: true,
         dateFormat: "Y-m-d H:i",
-        position: "right" // Calendar dropdown on the right
+        position: "right"
     });
 </script>
