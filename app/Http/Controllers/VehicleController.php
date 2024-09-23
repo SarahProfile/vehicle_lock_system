@@ -201,7 +201,8 @@ public function submitExitForm(Request $request, $id)
 
     $vehicle->save();
 
-    return redirect()->route('home')->with('success', 'تم إخراج المركبة بنجاح');
+    // return redirect()->route('home')->with('success', 'تم إخراج المركبة بنجاح');
+       return view('exit_vehicle', compact('vehicle'));
 }
 
 // Function to calculate the price based on your logic

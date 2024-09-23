@@ -50,6 +50,10 @@
         </tr>
         @if($vehicle->vehicle_status == 'خرجت')
         <tr>
+            <th>تاريخ وزمن خروج المركبة</th>
+            <td>{{ $vehicle->exit_date }}</td>
+        </tr>
+        <tr>
             <th> عدد الساعات</th>
             <td>
                 @php
@@ -86,10 +90,7 @@
             <td>{{$fixedPrice}}</td>
         </tr>
         
-        <tr>
-            <th>تاريخ وزمن خروج المركبة</th>
-            <td>{{ $vehicle->exit_date }}</td>
-        </tr>
+    
         <tr>
             <th>السعر قبل إضافة الضريبة</th>
             <td>{{round(($vehicle->vehicle_price)/(1+0.15))}}</td>

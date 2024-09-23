@@ -25,6 +25,64 @@
         <button type="submit" class="btn btn-success" style="background-color: #46C263; border-color:#53D769">إخراج المركبة</button>
        
     </form>
+    <table class="table table-bordered">
+    @if($vehicle->vehicle_status == 'خرجت')
+    <tr>
+        <th>تاريخ وزمن دخول المركبة</th>
+        <td>{{ $vehicle->enter_date }}</td>
+    </tr>
+        <tr>
+            <th>تاريخ وزمن خروج المركبة</th>
+            <td>{{ $vehicle->exit_date }}</td>
+        </tr>
+        <tr>
+            <th> عدد الساعات</th>
+            <td>
+                @php
+                    $enterDate = \Carbon\Carbon::parse($vehicle->enter_date);
+                    $exitDate = \Carbon\Carbon::parse($vehicle->exit_date);
+                    $hoursDifference = $exitDate->diffInMinutes($enterDate) / 60; // Calculate hours including minutes
+                    $roundedHours = ceil($hoursDifference); // Round up to nearest hour
+                @endphp
+                {{ $roundedHours }} ساعة
+            </td>
+        </tr>
+        <tr>
+            <th> أجرة الساعات</th>
+            <td>
+                @php
+                    $enterDate = \Carbon\Carbon::parse($vehicle->enter_date);
+                    $exitDate = \Carbon\Carbon::parse($vehicle->exit_date);
+                    $hoursDifference = $exitDate->diffInMinutes($enterDate) / 60; // Calculate hours including minutes
+                    $roundedHours = ceil($hoursDifference); // Round up to nearest hour
+                @endphp
+                {{ $roundedHours* 2 }} ريال
+            </td>
+        </tr>
+        <tr>
+            <th>أجرة السحب  </th>
+            @php
+               $enterDate = \Carbon\Carbon::parse($vehicle->enter_date);
+                    $exitDate = \Carbon\Carbon::parse($vehicle->exit_date);
+                    $hoursDifference = $exitDate->diffInMinutes($enterDate) / 60; // Calculate hours including minutes
+                    $roundedHours = ceil($hoursDifference); // Round up to nearest hour
+            $normalPrice = round(($vehicle->vehicle_price)/(1+0.15));
+            $fixedPrice = $normalPrice - (2*$roundedHours);
+              @endphp
+            <td>{{$fixedPrice}}</td>
+        </tr>
+        
+    
+        <tr>
+            <th>السعر قبل إضافة الضريبة</th>
+            <td>{{round(($vehicle->vehicle_price)/(1+0.15))}}</td>
+        </tr>
+        <tr>
+            <th>السعر بعد إضافة الضريبة</th>
+            <td>{{ $vehicle->vehicle_price }}</td>
+        </tr>
+        @endif
+    </table>
 </div>
 
 <script>
