@@ -9,7 +9,7 @@
                     <div class="card" style="padding: 10px">
 
             <h2>تسجيل المركبة</h2>
-            <form action="{{ route('vehicle.update', ['id' => $vehicle->id]) }}" method="POST" enctype="multipart/form-data">
+            <form id="vehicleForm2" action="{{ route('vehicle.update', ['id' => $vehicle->id]) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
                     {{-- <label for="vehicle_center">مركز المركبة</label>
@@ -85,7 +85,8 @@
                 <br>
                 <div class="form-group">
                     <label for="vehicle_number">رقم المركبة</label>
-                    <input type="text" name="vehicle_number" class="form-control" required value="{{$vehicle->vehicle_number}}">
+                    <input type="text" name="vehicle_number" id="vehicle_number2" class="form-control" required value="{{$vehicle->vehicle_number}}">
+                    <small id="vehicle_number_error" class="text-danger"></small>
                 </div>
                 <br>
                 <div class="form-group">
@@ -107,7 +108,8 @@
                 <br>
                 <div class="form-group">
                     <label for="chassis_number">رقم الهيكل</label>
-                    <input type="text" name="chassis_number" class="form-control" required  value="{{$vehicle->chassis_number}}">
+                    <input type="text" name="chassis_number" id="chassis_number2" class="form-control" required value="{{$vehicle->chassis_number}}">
+                    <small id="chassis_number_error" class="text-danger"></small>
                 </div>
                 <br>
                 
@@ -247,5 +249,59 @@
         enableTime: true,
         dateFormat: "Y-m-d H:i",
         position: "right"
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const vehicleNumberInput = document.getElementById('vehicle_number2');
+        const chassisNumberInput = document.getElementById('chassis_number2');
+        const vehicleForm = document.getElementById('vehicleForm2');
+
+        // Function to check uniqueness
+        function checkUniqueness(field, value, callback) {
+            const url = "{{ route('vehicle.checkUniqueness') }}"; // Define route in web.php to check uniqueness
+            fetch(`${url}?field=${field}&value=${value}`)
+                .then(response => response.json())
+                .then(data => {
+                    callback(data.isUnique);
+                });
+        }
+
+        // Check vehicle number uniqueness
+        vehicleNumberInput.addEventListener('change', function() {
+            const vehicleNumber = this.value;
+            checkUniqueness('vehicle_number', vehicleNumber, function(isUnique) {
+                const vehicleNumberError = document.getElementById('vehicle_number_error');
+                if (!isUnique) {
+                    vehicleNumberError.textContent = "رقم المركبة موجود بالفعل";
+                } else {
+                    vehicleNumberError.textContent = "";
+                }
+            });
+        });
+
+        // Check chassis number uniqueness
+        chassisNumberInput.addEventListener('change', function() {
+            const chassisNumber = this.value;
+            checkUniqueness('chassis_number', chassisNumber, function(isUnique) {
+                const chassisNumberError = document.getElementById('chassis_number_error');
+                if (!isUnique) {
+                    chassisNumberError.textContent = "رقم الهيكل موجود بالفعل";
+                } else {
+                    chassisNumberError.textContent = "";
+                }
+            });
+        });
+
+        // Prevent form submission if there are errors
+        vehicleForm.addEventListener('submit', function(event) {
+            const vehicleNumberError = document.getElementById('vehicle_number_error').textContent;
+            const chassisNumberError = document.getElementById('chassis_number_error').textContent;
+
+            if (vehicleNumberError || chassisNumberError) {
+                event.preventDefault(); // Prevent form submission
+                alert('يرجى تصحيح الأخطاء قبل المتابعة');
+            }
+        });
     });
 </script>
