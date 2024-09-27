@@ -57,9 +57,9 @@
                                                 {{-- <th class="all">موقع الرفع</th> --}}
                                                 <th class="all">
                                                     موقع الرفع
-                                                    <button type="button" class="btn btn-link p-0" style="margin-left: 5px;" onclick="toggleLockLocation()">
-                                                        <i class="mdi mdi-filter" style="font-size: 18px;"></i>
-                                                    </button>
+                                                    <!--<button type="button" class="btn btn-link p-0" style="margin-left: 5px;" onclick="toggleLockLocation()">-->
+                                                    <!--    <i class="mdi mdi-filter" style="font-size: 18px;"></i>-->
+                                                    <!--</button>-->
                                                 
                                                     <!-- Form for lock location sorting -->
                                                     <form id="lock-location-form" method="GET" style="display: inline;">
@@ -80,7 +80,7 @@
                                             </tr>
                                         </thead>
                                         @foreach($vehicles as $vehicle)
-                                        @if ($vehicle->vehicleCenter->name =='المدينة')
+                                @if ($vehicle->vehicleCenter && $vehicle->vehicleCenter->name =='المدينة')
                                         {{-- @if($vehicle->vehicle_center =='المدينة') --}}
                                         <tbody>
                                             {{-- @foreach($vehicles as $vehicle) --}}

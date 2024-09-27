@@ -201,8 +201,17 @@ public function submitExitForm(Request $request, $id)
 
     $vehicle->save();
 
-    // return redirect()->route('home')->with('success', 'تم إخراج المركبة بنجاح');
-       return view('exit_vehicle', compact('vehicle'));
+    return redirect()->route('home')->with('success', 'تم إخراج المركبة بنجاح');
+    //    return view('home', compact('vehicle'));
+}
+public function checkUniqueness(Request $request)
+{
+    $field = $request->input('field');
+    $value = $request->input('value');
+
+    $exists = Vehicle::where($field, $value)->exists();
+
+    return response()->json(['isUnique' => !$exists]);
 }
 
 // Function to calculate the price based on your logic

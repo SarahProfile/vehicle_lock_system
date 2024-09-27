@@ -12,6 +12,8 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 // Route to display the exit form
 Route::get('/vehicles/{id}/exit', [VehicleController::class, 'showExitForm'])->name('vehicle.exit');
 
+Route::get('/check-uniqueness', [VehicleController::class, 'checkUniqueness'])->name('vehicle.checkUniqueness');
+
 // Route to submit the exit form
 Route::put('/vehicles/{id}/exit', [VehicleController::class, 'submitExitForm'])->name('vehicle.submitExit');
 
