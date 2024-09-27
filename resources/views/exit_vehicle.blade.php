@@ -20,69 +20,41 @@
             <label for="vehicle_price">سعر الاخراج</label>
             <input type="text" id="vehicle_price" class="form-control" value="سيتم حساب السعر تلقائياً" readonly>
         </div>
-<br>
-<a href="{{ route('home') }}" class="btn btn-primary" style="background-color: #FC3D39; border-color:#E33437">الرجوع</a>
+        <br>
+        <table class="table table-bordered">
+            <tr>
+                <th>تاريخ وزمن دخول المركبة</th>
+                <td>{{ $vehicle->enter_date }}</td>
+            </tr>
+            <tr>
+                <th>تاريخ وزمن خروج المركبة</th>
+                <td id="exitDateField">سيتم تحديده</td>
+            </tr>
+            <tr>
+                <th>عدد الساعات</th>
+                <td id="hoursField">سيتم حسابه</td>
+            </tr>
+            <tr>
+                <th>أجرة الساعات</th>
+                <td id="priceField">سيتم حسابه</td>
+            </tr>
+            <tr>
+                <th>السعر قبل إضافة الضريبة</th>
+                <td id="beforeVatField">سيتم حسابه</td>
+            </tr>
+            <tr>
+                <th>السعر بعد إضافة الضريبة</th>
+                <td id="afterVatField">سيتم حسابه</td>
+            </tr>
+        </table>
+        <br>
+
+        <a href="{{ route('home') }}" class="btn btn-primary" style="background-color: #FC3D39; border-color:#E33437">الرجوع</a>
         <button type="submit" class="btn btn-success" style="background-color: #46C263; border-color:#53D769">إخراج المركبة</button>
-       
     </form>
-    <table class="table table-bordered">
-    @if($vehicle->vehicle_status == 'خرجت')
-    <tr>
-        <th>تاريخ وزمن دخول المركبة</th>
-        <td>{{ $vehicle->enter_date }}</td>
-    </tr>
-        <tr>
-            <th>تاريخ وزمن خروج المركبة</th>
-            <td>{{ $vehicle->exit_date }}</td>
-        </tr>
-        <tr>
-            <th> عدد الساعات</th>
-            <td>
-                @php
-                    $enterDate = \Carbon\Carbon::parse($vehicle->enter_date);
-                    $exitDate = \Carbon\Carbon::parse($vehicle->exit_date);
-                    $hoursDifference = $exitDate->diffInMinutes($enterDate) / 60; // Calculate hours including minutes
-                    $roundedHours = ceil($hoursDifference); // Round up to nearest hour
-                @endphp
-                {{ $roundedHours }} ساعة
-            </td>
-        </tr>
-        <tr>
-            <th> أجرة الساعات</th>
-            <td>
-                @php
-                    $enterDate = \Carbon\Carbon::parse($vehicle->enter_date);
-                    $exitDate = \Carbon\Carbon::parse($vehicle->exit_date);
-                    $hoursDifference = $exitDate->diffInMinutes($enterDate) / 60; // Calculate hours including minutes
-                    $roundedHours = ceil($hoursDifference); // Round up to nearest hour
-                @endphp
-                {{ $roundedHours* 2 }} ريال
-            </td>
-        </tr>
-        <tr>
-            <th>أجرة السحب  </th>
-            @php
-               $enterDate = \Carbon\Carbon::parse($vehicle->enter_date);
-                    $exitDate = \Carbon\Carbon::parse($vehicle->exit_date);
-                    $hoursDifference = $exitDate->diffInMinutes($enterDate) / 60; // Calculate hours including minutes
-                    $roundedHours = ceil($hoursDifference); // Round up to nearest hour
-            $normalPrice = round(($vehicle->vehicle_price)/(1+0.15));
-            $fixedPrice = $normalPrice - (2*$roundedHours);
-              @endphp
-            <td>{{$fixedPrice}}</td>
-        </tr>
-        
-    
-        <tr>
-            <th>السعر قبل إضافة الضريبة</th>
-            <td>{{round(($vehicle->vehicle_price)/(1+0.15))}}</td>
-        </tr>
-        <tr>
-            <th>السعر بعد إضافة الضريبة</th>
-            <td>{{ $vehicle->vehicle_price }}</td>
-        </tr>
-        @endif
-    </table>
+    <br>
+
+   
 </div>
 
 <script>
@@ -122,7 +94,17 @@
 
             // حساب السعر الإجمالي
             const totalPrice = (pricePerHour) + (2 * hours);
-            const totalPriceAfterVat = (totalPrice) +(0.15 * totalPrice)
+            const totalPriceBeforeVat = totalPrice;
+            const totalPriceAfterVat = totalPriceBeforeVat + (0.15 * totalPriceBeforeVat);
+
+            // Update table fields dynamically
+            document.getElementById('exitDateField').innerText = exitDate.toLocaleString();
+            document.getElementById('hoursField').innerText = hours + " ساعة";
+            document.getElementById('priceField').innerText = (2 * hours) + " ريال";
+            document.getElementById('beforeVatField').innerText = totalPriceBeforeVat.toFixed(2) + " ريال";
+            document.getElementById('afterVatField').innerText = totalPriceAfterVat.toFixed(2) + " ريال";
+
+            // Update the vehicle price input field
             document.getElementById('vehicle_price').value = totalPriceAfterVat.toFixed(2) + " ريال";
         } else {
             alert('تاريخ الخروج يجب أن يكون بعد تاريخ الدخول');
