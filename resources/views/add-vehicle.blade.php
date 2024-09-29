@@ -16,13 +16,13 @@
                     <label for="vehicle_center">مركز المركبة</label>
                     <select class="form-select" name="vehicle_center_id" id="vehicle_center">
                         @foreach($vehicleCenters as $center) 
-                        @if(auth::user()->type=='مشرف المدينة')
+                        @if(auth::user()->lock_center_id== 4)
                             <option value="{{ $center->id }}" > @if($center->id =='4') {{ $center->name }} @endif </option>
                         @endif
-                        @if(auth::user()->type=='مشرف الشرقية')
+                        @if(auth::user()->lock_center_id== 7)
                             <option value="{{ $center->id }}" > @if($center->id =='7') {{ $center->name }} @endif </option>
                         @endif
-                        @if(auth::user()->type=='مشرف عام')
+                        @if(auth::user()->lock_center_id== 0)
                             <option value="{{ $center->id }}">{{ $center->name }}</option>
                         @endif
                         @endforeach

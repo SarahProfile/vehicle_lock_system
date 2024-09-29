@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VehicleController;
-
+use App\Http\Controllers\CenterController;
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -11,9 +11,12 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 // Route to display the exit form
 Route::get('/vehicles/{id}/exit', [VehicleController::class, 'showExitForm'])->name('vehicle.exit');
-
+Route::get('/centers/create', function () {
+    return view('show.centers.create');
+});
 Route::get('/check-uniqueness', [VehicleController::class, 'checkUniqueness'])->name('vehicle.checkUniqueness');
-
+//// Route to submit the center form
+Route::post('/centers/store', [CenterController::class, 'store'])->name('centers.store');
 // Route to submit the exit form
 Route::put('/vehicles/{id}/exit', [VehicleController::class, 'submitExitForm'])->name('vehicle.submitExit');
 

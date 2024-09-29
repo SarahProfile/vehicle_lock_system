@@ -23,7 +23,8 @@ class VehicleController extends Controller
     
         // Fetch distinct lock locations from the vehicles table
         $lockLocations = Vehicle::select('lock_location')->distinct()->pluck('lock_location');
-    
+        $center = VehicleCenter::where('id', auth()->user()->lock_center_id)->first();
+
         // Start querying the Vehicle model
         $vehicles = Vehicle::query()
             ->when($search, function ($query, $search) {
@@ -68,12 +69,23 @@ class VehicleController extends Controller
             'enterDateOrder' => $enterDateOrder,
             'vehicleStatusOrder' => $vehicleStatusOrder,
             'locationOrder' => $locationOrder,
-            'lockLocations' => $lockLocations // Pass lock locations to the view
+            'lockLocations' => $lockLocations, // Pass lock locations to the view
+            'center'=> $center,
+
         ]);
     }
     
 
-    
+    public function checkUniqueness(Request $request)
+{
+    $field = $request->input('field');
+    $value = $request->input('value');
+
+    $exists = Vehicle::where($field, $value)->exists();
+
+    return response()->json(['isUnique' => !$exists]);
+}
+
 
     /**
      * Show the form for creating a new vehicle.
@@ -203,15 +215,6 @@ public function submitExitForm(Request $request, $id)
 
     return redirect()->route('home')->with('success', 'تم إخراج المركبة بنجاح');
     //    return view('home', compact('vehicle'));
-}
-public function checkUniqueness(Request $request)
-{
-    $field = $request->input('field');
-    $value = $request->input('value');
-
-    $exists = Vehicle::where($field, $value)->exists();
-
-    return response()->json(['isUnique' => !$exists]);
 }
 
 // Function to calculate the price based on your logic

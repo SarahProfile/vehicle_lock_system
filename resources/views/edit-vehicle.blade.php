@@ -23,13 +23,13 @@
                         <label for="vehicle_center">مركز المركبة</label>
                         <select class="form-select" name="vehicle_center_id" id="vehicle_center2">
                             @foreach($vehicleCenters as $center) 
-                            @if(auth::user()->type=='مشرف المدينة')
+                            @if(auth::user()->lock_center_id==4)
                             <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif> @if($center->name =='المدينة') {{ $center->name }} @endif </option>
                             @endif
-                            @if(auth::user()->type=='مشرف الشرقية')
+                            @if(auth::user()->lock_center_id==7)
                             <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif> @if($center->name =='المنطقة الشرقية'){{  $center->name}} @endif </option>
                             @endif
-                            @if(auth::user()->type=='مشرف عام')
+                            @if(auth::user()->lock_center_id==0)
                             <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif>{{ $center->name }}</option>
                             @endif
                             @endforeach

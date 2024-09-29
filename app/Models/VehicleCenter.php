@@ -8,7 +8,7 @@ class VehicleCenter extends Model
 {
 
     protected $table = 'lock_centers';
-    protected $fillable = ['vehicle_id','center_id'];
+    protected $fillable = ['vehicle_id','center_id','price','lock_area','vehicle_type'];
     public $timestamps = true;
     public function vehicles()
     {
