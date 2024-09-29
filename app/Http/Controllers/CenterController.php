@@ -14,6 +14,7 @@ class CenterController extends Controller
             'vehicle_type' => 'required|string|max:255',
             'lock_area' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'id' => $request->id,
         ]);
 
         // Create a new center
@@ -22,6 +23,7 @@ class CenterController extends Controller
             'vehicle_type' => $request->vehicle_type,
             'lock_area' => $request->lock_area,
             'price' => $request->price,
+            'id' => $request->id,
         ]);
 
         // Redirect or return success message

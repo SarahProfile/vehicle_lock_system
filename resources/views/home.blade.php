@@ -40,7 +40,9 @@
                                 
                                 {{-- Vehicles Details for المدينة --}}
                                 {{-- @if(auth::user()->type != 'مشاهد الشرقية' && auth::user()->type != 'مشرف الشرقية') --}}
+                               @if(auth::user()->lock_center_id != 0)
                                 <h4> مركبات {{$center->name}}</h4>
+                                @endif
                                 <div class="table-responsive">
                                     <table class="table table-centered w-100 dt-responsive nowrap" id="car-datatable">
                                         <thead class="table-light">

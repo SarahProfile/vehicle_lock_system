@@ -8,7 +8,7 @@ class LockCenter extends Model
 {
 
     protected $table = 'lock_centers';
-    protected $fillable = ['name'];
+    protected $fillable = ['name','id'];
     public $timestamps = true;
 
 }

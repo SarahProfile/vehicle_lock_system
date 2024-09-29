@@ -69,7 +69,9 @@ class HomeController extends Controller
         }
     
         // Paginate the result (20 per page)
-        $center = VehicleCenter::where('id', auth()->user()->lock_center_id)->first();
+        if($userCenter == 0 ){ $center = VehicleCenter::query();}
+        else{ $center = VehicleCenter::where('id', auth()->user()->lock_center_id)->first();}
+       
 
         if (!$center) {
             // Handle the case when no center is found, e.g., return a fallback or redirect
