@@ -17,13 +17,13 @@
                     <select class="form-select" name="vehicle_center_id" id="vehicle_center">
                         @foreach($vehicleCenters as $center) 
                         @if(auth::user()->lock_center_id== 4)
-                            <option value="{{ $center->id }}" > @if($center->id =='4') {{ $center->name }} @endif </option>
+                            <option value="{{ $center->id }}" @if(auth::user()->lock_center_id == $center->id) selected @endif> @if($center->id =='4') {{ $center->name }} @endif </option>
                         @endif
                         @if(auth::user()->lock_center_id== 7)
-                            <option value="{{ $center->id }}" > @if($center->id =='7') {{ $center->name }} @endif </option>
+                            <option value="{{ $center->id }}" @if(auth::user()->lock_center_id== $center->id) selected @endif > @if($center->id =='7') {{ $center->name }} @endif </option>
                         @endif
                         @if(auth::user()->lock_center_id== 0)
-                            <option value="{{ $center->id }}">{{ $center->name }}</option>
+                            <option value="{{ $center->id }}">@if($center->name != 'كل المدن'){{ $center->name }} @endif</option>
                         @endif
                         @endforeach
                     </select>

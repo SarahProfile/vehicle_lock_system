@@ -2,6 +2,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\CenterController;
+use App\Http\Controllers\CenterPriceController;
+
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -11,12 +13,19 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 // Route to display the exit form
 Route::get('/vehicles/{id}/exit', [VehicleController::class, 'showExitForm'])->name('vehicle.exit');
-Route::get('/centers/create', function () {
-    return view('show.centers.create');
-});
+// Route::get('/centers/create', function () {
+//     return view('show.centers.create');
+// });
+
+
 Route::get('/check-uniqueness', [VehicleController::class, 'checkUniqueness'])->name('vehicle.checkUniqueness');
 //// Route to submit the center form
+Route::get('/centers/create', [CenterController::class, 'create']);
 Route::post('/centers/store', [CenterController::class, 'store'])->name('centers.store');
+//// Route to submit the center prices form
+Route::get('/centers/prices/create', [CenterPriceController::class, 'create']);
+
+Route::post('/centers/prices/store', [CenterPriceController::class, 'store'])->name('centers.price.store');
 // Route to submit the exit form
 Route::put('/vehicles/{id}/exit', [VehicleController::class, 'submitExitForm'])->name('vehicle.submitExit');
 
@@ -33,10 +42,6 @@ Route::prefix('admin')->group(function () {
         Route::get('/delete/{id}', [VehicleController::class, 'destroy'])->name('vehicle.destroy');
         Route::get('/vehicle/{id}', [VehicleController::class, 'show'])->name('vehicle.show');
         Route::get('/{id}', [VehicleController::class, 'showFull'])->name('vehicle.showFull');
-
-  
-
-
 
     });
 });

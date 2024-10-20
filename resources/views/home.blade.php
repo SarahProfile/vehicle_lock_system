@@ -299,7 +299,9 @@
     border-radius: 4px;
     border: 1px solid #ced4da;
 }
-
+.hidden.sm\:flex-1.sm\:flex.sm\:items-center.sm\:justify-between {
+    padding-top: 15px;
+}
 span.relative.z-0.inline-flex.rtl\:flex-row-reverse.shadow-sm.rounded-md {
     display: none;
 }
