@@ -20,10 +20,10 @@ Route::get('/vehicles/{id}/exit', [VehicleController::class, 'showExitForm'])->n
 
 Route::get('/check-uniqueness', [VehicleController::class, 'checkUniqueness'])->name('vehicle.checkUniqueness');
 //// Route to submit the center form
-Route::get('/centers/create', [CenterController::class, 'create']);
+Route::get('/centers/create', [CenterController::class, 'create'])->name('add.centers');
 Route::post('/centers/store', [CenterController::class, 'store'])->name('centers.store');
 //// Route to submit the center prices form
-Route::get('/centers/prices/create', [CenterPriceController::class, 'create']);
+Route::get('/centers/prices/create', [CenterPriceController::class, 'create'])->name('centers.prices');
 
 Route::post('/centers/prices/store', [CenterPriceController::class, 'store'])->name('centers.price.store');
 // Route to submit the exit form

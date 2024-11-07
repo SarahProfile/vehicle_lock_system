@@ -22,28 +22,42 @@
       
                 <label for="price1"> ادخل السعراذا كانت المركبة صغيرة و داخل المنطقة</label>
                 
-                <input type="text" name="price1" class="form-control" required>
+                <input type="text" name="price_small_inside" class="form-control" required>
             </div>
             <br>
             <div class="form-group">
       
                 <label for="price2"> ادخل السعراذا كانت المركبة كبيرة و داخل المنطقة</label>
                 
-                <input type="text" name="price2" class="form-control" required>
+                <input type="text" name="price_big_inside" class="form-control" required>
             </div>
             <br>
             <div class="form-group">
       
                 <label for="price3"> ادخل السعراذا كانت المركبة صغيرة و خارج المنطقة</label>
                 
-                <input type="text" name="price3" class="form-control" required>
+                <input type="text" name="price_small_outside" class="form-control" required>
             </div>
             <br>
             <div class="form-group">
       
                 <label for="price4"> ادخل السعراذا كانت المركبة كبيرة و خارج المنطقة</label>
                 
-                <input type="text" name="price4" class="form-control" required>
+                <input type="text" name="price_big_outside" class="form-control" required>
+            </div>
+            <br>
+            <div class="form-group">
+      
+                <label for="price4"> ادخل السعراذا كانت المركبة معدات و خارج المنطقة</label>
+                
+                <input type="text" name="price_equipment_inside" class="form-control" required>
+            </div>
+            <br>
+            <div class="form-group">
+      
+                <label for="price4"> ادخل السعراذا كانت المركبة معدات و خارج المنطقة</label>
+                
+                <input type="text" name="price_equipment_outside" class="form-control" required>
             </div>
             <br>
         </div>

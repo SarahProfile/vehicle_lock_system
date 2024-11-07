@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use App\Models\VehicleCenter;
 class RegisterController extends Controller
 {
     /*
@@ -36,10 +36,10 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('guest');
+    // }
 
     /**
      * Get a validator for an incoming registration request.
@@ -49,10 +49,13 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'type' => ['required', 'string', 'max:255'],
+            'lock_center_id' => ['required', 'int', 'max:11'],
         ]);
     }
 
@@ -64,10 +67,21 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $centers = VehicleCenter::all();
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'type' => $data['type'],
+            'lock_center_id' => $data['lock_center_id'],
+            'password' => Hash::make($data['password'],['centers' => $centers]),
         ]);
     }
+    // protected function create()
+    // {
+    //      // Assuming you have a VehicleCenter model
+    // $users = User::all(); // Fetch all centers
+    // $centers = VehicleCenter::all();
+    // return view('auth.register',['centers' => $centers,['users' => $users]]);
+       
+    // }
 }

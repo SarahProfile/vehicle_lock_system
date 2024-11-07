@@ -22,7 +22,7 @@ class CenterController extends Controller
       
 
         // Redirect or return success message
-        return redirect()->back()->with('success', 'Center added successfully!');
+        return redirect()->route('centers.prices')->with('success', 'Center added successfully!');
     }
 
     public function create()
