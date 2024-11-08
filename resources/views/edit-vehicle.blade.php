@@ -84,6 +84,12 @@
                 </div>
                 <br>
                 <div class="form-group">
+                    <label for="vehicle_number">رقم البلاغ</label>
+                    <input type="text" id="report_number" name="report_number" class="form-control" required value="{{$vehicle->report_number}}>
+                    {{-- <span id="report_number" class="text-danger"></span> --}}
+                </div>
+                <br>
+                <div class="form-group">
                     <label for="vehicle_number">رقم المركبة</label>
                     <input type="text" name="vehicle_number" id="vehicle_number2" class="form-control" required value="{{$vehicle->vehicle_number}}">
                     <small id="vehicle_number_error" class="text-danger"></small>
@@ -268,17 +274,17 @@
         }
 
         // Check vehicle number uniqueness
-        vehicleNumberInput.addEventListener('change', function() {
-            const vehicleNumber = this.value;
-            checkUniqueness('vehicle_number', vehicleNumber, function(isUnique) {
-                const vehicleNumberError = document.getElementById('vehicle_number_error');
-                if (!isUnique) {
-                    vehicleNumberError.textContent = "رقم المركبة موجود بالفعل";
-                } else {
-                    vehicleNumberError.textContent = "";
-                }
-            });
-        });
+        // vehicleNumberInput.addEventListener('change', function() {
+        //     const vehicleNumber = this.value;
+        //     checkUniqueness('vehicle_number', vehicleNumber, function(isUnique) {
+        //         const vehicleNumberError = document.getElementById('vehicle_number_error');
+        //         if (!isUnique) {
+        //             vehicleNumberError.textContent = "رقم المركبة موجود بالفعل";
+        //         } else {
+        //             vehicleNumberError.textContent = "";
+        //         }
+        //     });
+        // });
 
         // Check chassis number uniqueness
         chassisNumberInput.addEventListener('change', function() {

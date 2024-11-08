@@ -10,6 +10,7 @@ class Vehicle extends Model
     protected $fillable = [
         // 'vehicle_center', 
         'enter_date', 
+        'report_number',
         'exit_date',  // Add exit_date
         'lock_location', 
         'lock_area', 

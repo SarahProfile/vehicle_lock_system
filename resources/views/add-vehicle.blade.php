@@ -67,6 +67,12 @@
                 </div>
                 <br>
                 <div class="form-group">
+                    <label for="vehicle_number">رقم البلاغ</label>
+                    <input type="text" id="report_number" name="report_number" class="form-control" required>
+                    {{-- <span id="report_number" class="text-danger"></span> --}}
+                </div>
+                <br>
+                <div class="form-group">
                     <label for="vehicle_number">رقم المركبة</label>
                     <input type="text" id="vehicle_number" name="vehicle_number" class="form-control" required>
                     <span id="vehicle_number_error" class="text-danger"></span>
@@ -180,17 +186,17 @@
         }
 
         // Check vehicle number uniqueness
-        vehicleNumberInput.addEventListener('change', function() {
-            const vehicleNumber = this.value;
-            checkUniqueness('vehicle_number', vehicleNumber, function(isUnique) {
-                const vehicleNumberError = document.getElementById('vehicle_number_error');
-                if (!isUnique) {
-                    vehicleNumberError.textContent = "رقم المركبة موجود بالفعل";
-                } else {
-                    vehicleNumberError.textContent = "";
-                }
-            });
-        });
+        // vehicleNumberInput.addEventListener('change', function() {
+        //     const vehicleNumber = this.value;
+        //     checkUniqueness('vehicle_number', vehicleNumber, function(isUnique) {
+        //         const vehicleNumberError = document.getElementById('vehicle_number_error');
+        //         if (!isUnique) {
+        //             vehicleNumberError.textContent = "رقم المركبة موجود بالفعل";
+        //         } else {
+        //             vehicleNumberError.textContent = "";
+        //         }
+        //     });
+        // });
 
         // Check chassis number uniqueness
         chassisNumberInput.addEventListener('change', function() {

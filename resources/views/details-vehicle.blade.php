@@ -33,7 +33,7 @@
             <td>{{ $vehicle->lock_area }}</td>
         </tr>
         <tr>
-            <th>رقم المركبة</th>
+            <th>رقم اللوحة</th>
             <td>{{ $vehicle->vehicle_number }}</td>
         </tr>
         <tr>

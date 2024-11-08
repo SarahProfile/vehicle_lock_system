@@ -47,6 +47,7 @@
                                     <table class="table table-centered w-100 dt-responsive nowrap" id="car-datatable">
                                         <thead class="table-light">
                                             <tr>
+                                                <th class="all">رقم تسلسلي للمركبة</th>
                                                 <th class="all">
                                                     تاريخ دخول المركبة
                                                     <button type="button" class="btn btn-link p-0" style="margin-left: 5px;" onclick="toggleDateOrder()">
@@ -74,6 +75,7 @@
                                             {{-- @if($vehicle->vehicleCenter && $vehicle->vehicleCenter->name == 'المدينة') --}}
                                             <tbody>
                                                 <tr>
+                                                    <td>{{ $vehicle->id }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($vehicle->enter_date)->format('Y-m-d') }}</td>
                                                     <td>{{ $vehicle->vehicle_number }}</td>
                                                     <td>{{ $vehicle->chassis_number }}</td>

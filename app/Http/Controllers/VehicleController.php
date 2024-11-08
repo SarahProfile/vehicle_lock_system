@@ -138,6 +138,7 @@ class VehicleController extends Controller
         'vehicle_type' => 'required',
         // 'exit_date'=>'required',
         'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', 
+        'report_number' => 'required',
     ]);
 
     // Calculate the time difference in hours between enter_date and exit_date
@@ -309,6 +310,7 @@ public function update(Request $request, $id)
         'vehicle_type' => 'required',
         'vehicle_status' => 'nullable',
         'exit_date' => 'nullable|date',
+        'report_number' => 'required',
         'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
