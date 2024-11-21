@@ -23,12 +23,12 @@
                         <label for="vehicle_center">مركز المركبة</label>
                         <select class="form-select" name="vehicle_center_id" id="vehicle_center2">
                             @foreach($vehicleCenters as $center) 
-                            @if(auth::user()->lock_center_id==4)
-                            <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif> @if($center->name =='المدينة') {{ $center->name }} @endif </option>
+                            @if(auth::user()->lock_center_id==  $center->id )
+                            <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif>  {{ $center->name }}  </option>
                             @endif
-                            @if(auth::user()->lock_center_id==7)
+                            {{-- @if(auth::user()->lock_center_id==7)
                             <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif> @if($center->name =='المنطقة الشرقية'){{  $center->name}} @endif </option>
-                            @endif
+                            @endif --}}
                             @if(auth::user()->lock_center_id==0)
                             <option value="{{ $center->id }}" @if($vehicle->vehicle_center_id == $center->id) selected @endif>{{ $center->name }}</option>
                             @endif
@@ -85,12 +85,12 @@
                 <br>
                 <div class="form-group">
                     <label for="vehicle_number">رقم البلاغ</label>
-                    <input type="text" id="report_number" name="report_number" class="form-control" required value="{{$vehicle->report_number}}>
-                    {{-- <span id="report_number" class="text-danger"></span> --}}
+                    <input type="text" id="report_number" name="report_number" class="form-control" required value="{{$vehicle->report_number}}">
+                    <span id="report_number" class="text-danger"></span>
                 </div>
                 <br>
                 <div class="form-group">
-                    <label for="vehicle_number">رقم المركبة</label>
+                    <label for="vehicle_number">رقم اللوحة</label>
                     <input type="text" name="vehicle_number" id="vehicle_number2" class="form-control" required value="{{$vehicle->vehicle_number}}">
                     <small id="vehicle_number_error" class="text-danger"></small>
                 </div>

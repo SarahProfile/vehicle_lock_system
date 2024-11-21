@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\CenterController;
 use App\Http\Controllers\CenterPriceController;
-
+use App\Http\Controllers\UserController;
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -16,7 +16,11 @@ Route::get('/vehicles/{id}/exit', [VehicleController::class, 'showExitForm'])->n
 // Route::get('/centers/create', function () {
 //     return view('show.centers.create');
 // });
-
+// users list 
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
 Route::get('/check-uniqueness', [VehicleController::class, 'checkUniqueness'])->name('vehicle.checkUniqueness');
 //// Route to submit the center form

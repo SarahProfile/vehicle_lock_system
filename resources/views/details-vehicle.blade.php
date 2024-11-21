@@ -37,6 +37,10 @@
             <td>{{ $vehicle->vehicle_number }}</td>
         </tr>
         <tr>
+            <th> رقم البلاغ</th>
+            <td>{{ $vehicle->report_number }}</td>
+        </tr>
+        <tr>
             <th>موديل المركبة</th>
             <td>{{ $vehicle->vehicle_model }}</td>
         </tr>

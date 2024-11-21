@@ -26,12 +26,18 @@
                         </div>
                         <div class="row mb-3">
                             <label for="type" class="col-md-4 col-form-label text-md-end">{{ __('نوع المستخدم') }}</label>
-
-                            <div class="col-md-6">
+<div class="col-md-6">
+                            <select name="type" class="form-select" id="type">
+                                <option value="مشرف">مشرف</option>
+                                <option value="مشاهد">مشاهد</option>
+                               
+                            </select>
+                        </div>
+                            {{-- <div class="col-md-6">
                                 <input id="type" type="text" class="form-control @error('name') is-invalid @enderror" name="type"  required  autofocus>
 
                                
-                            </div>
+                            </div> --}}
                         </div>
 
                         <div class="row mb-3">

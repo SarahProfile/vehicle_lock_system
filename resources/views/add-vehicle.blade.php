@@ -16,12 +16,12 @@
                     <label for="vehicle_center">مركز المركبة</label>
                     <select class="form-select" name="vehicle_center_id" id="vehicle_center">
                         @foreach($vehicleCenters as $center) 
-                        @if(auth::user()->lock_center_id== 4)
-                            <option value="{{ $center->id }}" @if(auth::user()->lock_center_id == $center->id) selected @endif> @if($center->id =='4') {{ $center->name }} @endif </option>
+                        @if(auth::user()->lock_center_id==  $center->id)
+                            <option value="{{ $center->id }}" @if(auth::user()->lock_center_id == $center->id) selected @endif> {{ $center->name }}  </option>
                         @endif
-                        @if(auth::user()->lock_center_id== 7)
+                        {{-- @if(auth::user()->lock_center_id== 7)
                             <option value="{{ $center->id }}" @if(auth::user()->lock_center_id== $center->id) selected @endif > @if($center->id =='7') {{ $center->name }} @endif </option>
-                        @endif
+                        @endif --}}
                         @if(auth::user()->lock_center_id== 0)
                             <option value="{{ $center->id }}">@if($center->name != 'كل المدن'){{ $center->name }} @endif</option>
                         @endif
@@ -73,7 +73,7 @@
                 </div>
                 <br>
                 <div class="form-group">
-                    <label for="vehicle_number">رقم المركبة</label>
+                    <label for="vehicle_number">رقم اللوحة</label>
                     <input type="text" id="vehicle_number" name="vehicle_number" class="form-control" required>
                     <span id="vehicle_number_error" class="text-danger"></span>
                 </div>
