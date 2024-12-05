@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Vehicle;
 use App\Models\VehicleCenter;
+use App\Models\VehicleCenterPrice;
 
 class VehicleController extends Controller 
 {
@@ -20,10 +21,11 @@ class VehicleController extends Controller
         $vehicleStatusOrder = $request->input('vehicle_status_order'); // to manage the status order
     $enterDateOrder = $request->input('enter_date_order', 'desc'); // Default to 'desc' for new to old
         $locationOrder = $request->input('location_order'); // to manage lock location sorting
-    
+        
         // Fetch distinct lock locations from the vehicles table
         $lockLocations = Vehicle::select('lock_location')->distinct()->pluck('lock_location');
         $center = VehicleCenter::where('id', auth()->user()->lock_center_id)->first();
+
 
         // Start querying the Vehicle model
         $vehicles = Vehicle::query()
@@ -141,36 +143,7 @@ class VehicleController extends Controller
         'report_number' => 'required',
     ]);
 
-    // Calculate the time difference in hours between enter_date and exit_date
-    $enterDate = new \DateTime($request->input('enter_date'));
-    $exitDate = new \DateTime($request->input('exit_date'));
-    $hours = $enterDate->diff($exitDate)->h;
-
-    // Calculate the price based on vehicle_type, lock_area, and hours
-    $pricePerHour = 0;
-
-    if ($request->input('vehicle_type') == 'صغيرة' && $request->input('lock_area') == 'داخل المنطقة') {
-        $PerHour = 500;
-    } elseif ($request->input('vehicle_type') == 'صغيرة' && $request->input('lock_area') == 'خارج المنطقة') {
-        $pricePerHour = 800;
-    } elseif ($request->input('vehicle_type') == 'كبيرة' && $request->input('lock_area') == 'خارج المنطقة') {
-        $pricePerHour = 1500;
-    }
-elseif ($request->input('vehicle_type') == 'كبيرة' && $request->input('lock_area') == 'داخل المنطقة') {
-    $pricePerHour = 1000;
-}
- elseif ($request->input('vehicle_type') == 'المعدات' && $request->input('lock_area') == 'خارج المنطقة') {
-    $pricePerHour = 2700;
-}
-elseif ($request->input('vehicle_type') == 'المعدات' && $request->input('lock_area') == 'داخل المنطقة') {
-    $pricePerHour = 2000;
-}
-
-    $vehiclePrice = $hours * $pricePerHour;
-
-    // Add the calculated price to the validated data
-    $validatedData['vehicle_price'] = $vehiclePrice;
-
+   
     // Create the vehicle record
     $vehicle = Vehicle::create($validatedData);
 
@@ -187,18 +160,52 @@ elseif ($request->input('vehicle_type') == 'المعدات' && $request->input('
         }
     }
 
-    return redirect()->route('home')->with('success', 'Vehicle added successfully with a price of ' . $vehiclePrice . ' ريال.');
+    return redirect()->route('home')->with('success', 'Vehicle added successfully  ' );
 }
-public function showExitForm($id)
+// public function showExitForm($id)
+// {
+//     $vehicle = Vehicle::findOrFail($id);
+//     return view('exit_vehicle', compact('vehicle'));
+// }
+public function showExitForm($vehicleId)
 {
-    $vehicle = Vehicle::findOrFail($id);
-    return view('exit_vehicle', compact('vehicle'));
+    // Fetch the vehicle record by ID
+    $vehicle = Vehicle::findOrFail($vehicleId);
+
+    // Get the center price from VehicleCenterPrice model based on vehicle's center ID
+    $centerPrices = VehicleCenterPrice::all();
+
+        // Pass the center prices to the view
+        return view('exit_vehicle', compact('vehicle', 'centerPrices'));
+
 }
+
+private function getPricePerHour($vehicle, $centerPrice)
+{
+    // Check the vehicle type and lock area to determine the price per hour
+    if ($vehicle->vehicle_type === 'صغيرة') {
+        if ($vehicle->lock_area === 'داخل المنطقة') {
+            return $centerPrice->small_inside_price; // Assuming the price is stored in these fields
+        } elseif ($vehicle->lock_area === 'خارج المنطقة') {
+            return $centerPrice->small_outside_price; // Assuming the price is stored in these fields
+        }
+    } elseif ($vehicle->vehicle_type === 'كبيرة') {
+        if ($vehicle->lock_area === 'داخل المنطقة') {
+            return $centerPrice->large_inside_price;
+        } elseif ($vehicle->lock_area === 'خارج المنطقة') {
+            return $centerPrice->large_outside_price;
+        }
+    }
+
+    // Default price if no matching conditions are found
+    return 0;
+}
+
 
 public function submitExitForm(Request $request, $id)
 {
     $vehicle = Vehicle::findOrFail($id);
-
+ 
     // Validate the input
     $request->validate([
         'exit_date' => 'required|date|after_or_equal:' . $vehicle->enter_date,
@@ -224,6 +231,7 @@ private function calculateVehiclePrice($vehicle)
     $enter_date = new \DateTime($vehicle->enter_date);
     $exit_date = new \DateTime($vehicle->exit_date);
     $interval = $enter_date->diff($exit_date);
+    $centerPrice=VehicleCenterPrice::where('center_id',$vehicle->vehicle_center_id)->first();
 
     // Calculate total hours
     $hours = ($interval->days * 24) + $interval->h;
@@ -237,21 +245,21 @@ private function calculateVehiclePrice($vehicle)
     $price_per_hour = 0;
     if ($vehicle->vehicle_type === 'صغيرة') {
         if ($vehicle->lock_area === 'داخل المنطقة') {
-            $price_per_hour = 500;
+            $price_per_hour = $centerPrice->price_small_inside;
         } elseif ($vehicle->lock_area === 'خارج المنطقة') {
-            $price_per_hour = 800;
+            $price_per_hour = $centerPrice->price_small_outside;
         }
     } elseif ($vehicle->vehicle_type === 'كبيرة') {
         if ($vehicle->lock_area === 'داخل المنطقة') {
-            $price_per_hour = 1000;
+            $price_per_hour = $centerPrice->price_big_inside;
         } elseif ($vehicle->lock_area === 'خارج المنطقة') {
-            $price_per_hour = 1500;
+            $price_per_hour = $centerPrice->price_big_outside;
         }
     } elseif ($vehicle->vehicle_type === 'المعدات') {
         if ($vehicle->lock_area === 'داخل المنطقة') {
-            $price_per_hour = 2000;
+            $price_per_hour = $centerPrice->price_equipment_inside;
         } elseif ($vehicle->lock_area === 'خارج المنطقة') {
-            $price_per_hour = 2700;
+            $price_per_hour =  $centerPrice->price_equipment_outside;
         }
     }
 
@@ -264,7 +272,7 @@ private function calculateVehiclePrice($vehicle)
 public function exitVehicle(Request $request, $id)
 {
     $vehicle = Vehicle::findOrFail($id);
-    
+    $vehicleCenterPrices = VehicleCenterPrice::all(); // Fetch all centers
     // Validate the exit date
     $validatedData = $request->validate([
         'exit_date' => 'required|date',
@@ -347,10 +355,12 @@ public function update(Request $request, $id)
     {
         $vehicle = Vehicle::find($id);
         $vehicleCenters = VehicleCenter::all(); // Fetch all vehicle centers
-        
+         // Get the center price from VehicleCenterPrice model based on vehicle's center ID
+        $centerPrices = VehicleCenterPrice::all();
         return view('edit-vehicle', [
             'vehicle' => $vehicle,
             'vehicleCenters' => $vehicleCenters, // Pass the vehicle centers to the view
+            'centerPrices'=>$centerPrices,// Pass the vehicle centers prices to the view
         ]);
     }
     

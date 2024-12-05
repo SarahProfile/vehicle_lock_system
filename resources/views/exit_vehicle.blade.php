@@ -54,10 +54,9 @@
     </form>
     <br>
 
-   
 </div>
 
-<script>
+{{-- <script>
     document.getElementById('exit_date').addEventListener('change', function() {
         const exitDate = new Date(this.value);
         const enterDate = new Date("{{ $vehicle->enter_date }}"); // تاريخ الدخول من قاعدة البيانات
@@ -71,26 +70,19 @@
 
             let pricePerHour = 0;
 
-            // تحديد السعر بناءً على نوع المركبة ومكان الحجز
-            if ("{{ $vehicle->vehicle_type }}" === 'صغيرة') {
-                if ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') {
-                    pricePerHour = 500;
-                } else if ("{{ $vehicle->lock_area }}" === 'خارج المنطقة') {
-                    pricePerHour = 800;
+            // Loop through center prices to find the correct one based on vehicle's vehicle_center_id
+            @foreach($centerPrices as $centerPrice)
+                if ("{{ $vehicle->vehicle_center_id }}" === '{{ $centerPrice->center_id }}') {
+                    // Based on vehicle type and lock area, assign price
+                    if ("{{ $vehicle->vehicle_type }}" === 'صغيرة') {
+                        pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? '{{ $centerPrice->price_small_inside }}' : '{{ $centerPrice->price_small_outside }}';
+                    } else if ("{{ $vehicle->vehicle_type }}" === 'كبيرة') {
+                        pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? '{{ $centerPrice->price_big_inside }}' : '{{ $centerPrice->price_small_outside }}';
+                    } else if ("{{ $vehicle->vehicle_type }}" === 'المعدات') {
+                        pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? '{{ $centerPrice->price_equipment_inside }}' : '{{ $centerPrice->price_equipment_outside }}';
+                    }
                 }
-            } else if ("{{ $vehicle->vehicle_type }}" === 'كبيرة') {
-                if ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') {
-                    pricePerHour = 1000;
-                } else if ("{{ $vehicle->lock_area }}" === 'خارج المنطقة') {
-                    pricePerHour = 1500;
-                }
-            } else if ("{{ $vehicle->vehicle_type }}" === 'المعدات') {
-                if ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') {
-                    pricePerHour = 2000;
-                } else if ("{{ $vehicle->lock_area }}" === 'خارج المنطقة') {
-                    pricePerHour = 2700;
-                }
-            }
+            @endforeach
 
             // حساب السعر الإجمالي
             const totalPrice = (pricePerHour) + (2 * hours);
@@ -110,6 +102,53 @@
             alert('تاريخ الخروج يجب أن يكون بعد تاريخ الدخول');
         }
     });
+</script> --}}
+<script>
+    // Pass the centerPrices data to JavaScript
+    const centerPrices = @json($centerPrices);
+
+    document.getElementById('exit_date').addEventListener('change', function() {
+        const exitDate = new Date(this.value);
+        const enterDate = new Date("{{ $vehicle->enter_date }}");
+
+        if (exitDate > enterDate) {
+            let hours = Math.abs(exitDate - enterDate) / 36e5;
+            hours = Math.ceil(hours); // Round up to the nearest hour
+
+            let pricePerHour = 0;
+
+            // Loop through centerPrices to find the matching one
+            centerPrices.forEach(centerPrice => {
+                if ("{{ $vehicle->vehicle_center_id }}" === centerPrice.center_id.toString()) {
+                    // Based on vehicle type and lock area, assign price
+                    if ("{{ $vehicle->vehicle_type }}" === 'صغيرة') {
+                        pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? centerPrice.price_small_inside : centerPrice.price_small_outside;
+                    } else if ("{{ $vehicle->vehicle_type }}" === 'كبيرة') {
+                        pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? centerPrice.price_big_inside : centerPrice.price_big_outside;
+                    } else if ("{{ $vehicle->vehicle_type }}" === 'المعدات') {
+                        pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? centerPrice.price_equipment_inside : centerPrice.price_equipment_outside;
+                    }
+                }
+            });
+
+            const totalPrice = (pricePerHour) + (2 * hours);
+            const totalPriceBeforeVat = totalPrice;
+            const totalPriceAfterVat = totalPriceBeforeVat + (0.15 * totalPriceBeforeVat);
+
+            // Update the table dynamically
+            document.getElementById('exitDateField').innerText = exitDate.toLocaleString();
+            document.getElementById('hoursField').innerText = hours + " ساعة";
+            document.getElementById('priceField').innerText = totalPrice + " ريال";
+            document.getElementById('beforeVatField').innerText = totalPriceBeforeVat.toFixed(2) + " ريال";
+            document.getElementById('afterVatField').innerText = totalPriceAfterVat.toFixed(2) + " ريال";
+
+            // Update the vehicle price input field
+            document.getElementById('vehicle_price').value = totalPriceAfterVat.toFixed(2) + " ريال";
+        } else {
+            alert('تاريخ الخروج يجب أن يكون بعد تاريخ الدخول');
+        }
+    });
 </script>
+
 
 @endsection

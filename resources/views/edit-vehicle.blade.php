@@ -177,52 +177,64 @@
 @endsection
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // قم بتحديد عناصر الحقول
+        // Select the exit date input and the price input fields
         const exitDateInput = document.getElementById('exit_date');
         const priceInput = document.getElementById('vehicle_price');
 
-        // استمع لتغييرات في حقل exit_date
-        exitDateInput.addEventListener('change', function() {
-            // احصل على قيمة تاريخ الدخول وتاريخ الخروج
+        // Define the centerPrices data (assumed to be passed from the backend)
+        const centerPrices = @json($centerPrices);
+
+        // Listen for the change in the exit date input
+        exitDateInput.addEventListener('input', function() {
+            // Get the value of the enter date from the vehicle data
             const enterDate = new Date("{{ $vehicle->enter_date }}");
+
+            // Get the selected exit date
             const exitDate = new Date(exitDateInput.value);
 
-            // احسب الفرق بالوقت (بالساعات)
+            // Calculate the time difference in hours
             let timeDifference = (exitDate - enterDate) / (1000 * 60 * 60);
 
-            // إذا كان الفرق أقل من ساعة، نعتبره ساعة كاملة
+            // Round up to the nearest whole hour if the time difference is less than one hour
             timeDifference = Math.ceil(timeDifference);
 
-            // احسب السعر بناءً على نوع المركبة ومكان الحجز
+            // Default price is zero
             let price = 0;
+
+            // Get the vehicle type and lock area
             const vehicleType = "{{ $vehicle->vehicle_type }}";
             const lockArea = "{{ $vehicle->lock_area }}";
+            
+            // Loop through the center prices and calculate the appropriate price based on the conditions
+            centerPrices.forEach(centerPrice => {
+                if ("{{ $vehicle->vehicle_center_id }}" === centerPrice.center_id.toString()) {
+                    // Calculate the price based on the vehicle type and lock area
+                    if (vehicleType === 'صغيرة' && lockArea === 'داخل المنطقة') {
+                        price = centerPrice.price_small_inside + (timeDifference * 2);
+                    } else if (vehicleType === 'صغيرة' && lockArea === 'خارج المنطقة') {
+                        price = centerPrice.price_small_outside + (timeDifference * 2);
+                    } else if (vehicleType === 'كبيرة' && lockArea === 'خارج المنطقة') {
+                        price = centerPrice.price_big_outside + (timeDifference * 2);
+                    } else if (vehicleType === 'كبيرة' && lockArea === 'داخل المنطقة') {
+                        price = centerPrice.price_big_inside + (timeDifference * 2);
+                    } else if (vehicleType === 'المعدات' && lockArea === 'داخل المنطقة') {
+                        price = centerPrice.price_equipment_inside + (timeDifference * 2);
+                    } else if (vehicleType === 'المعدات' && lockArea === 'خارج المنطقة') {
+                        price = centerPrice.price_equipment_outside + (timeDifference * 2);
+                    }
+                }
+            });
 
-            if (vehicleType === 'صغيرة' && lockArea === 'داخل المنطقة') {
-                price = (500) + (timeDifference * 2);
-                price_after_vat = price + (price * 0.15);
-            } else if (vehicleType === 'صغيرة' && lockArea === 'خارج المنطقة') {
-                price = (800) + (timeDifference * 2);
-                price_after_vat = price + (price * 0.15);
-            } else if (vehicleType === 'كبيرة' && lockArea === 'خارج المنطقة') {
-                price = (1500) + (timeDifference * 2);
-                price_after_vat = price + (price * 0.15);
-            } else if (vehicleType === 'كبيرة' && lockArea === 'داخل المنطقة') {
-                price = (1000) + (timeDifference * 2);
-                price_after_vat = price + (price * 0.15);
-            } else if (vehicleType === 'المعدات' && lockArea === 'داخل المنطقة') {
-                price = (2000) + (timeDifference * 2);
-                price_after_vat = price + (price * 0.15);
-            } else if (vehicleType === 'المعدات' && lockArea === 'خارج المنطقة') {
-                price = (2700) + (timeDifference * 2);
-                price_after_vat = price + (price * 0.15);
-            }
+            // Add VAT (15%)
+            const priceAfterVAT = price + (price * 0.15);
 
-            // عرض السعر في حقل vehicle_price
-            priceInput.value = price_after_vat.toFixed(2);
+            // Update the price input field with the calculated price
+            priceInput.value = priceAfterVAT.toFixed(2);
         });
     });
 </script>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -307,6 +319,22 @@
             if (vehicleNumberError || chassisNumberError) {
                 event.preventDefault(); // Prevent form submission
                 alert('يرجى تصحيح الأخطاء قبل المتابعة');
+            }
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const reportNumberInput = document.getElementById('report_number');
+
+        // Listen for input changes
+        reportNumberInput.addEventListener('input', function() {
+            const value = reportNumberInput.value;
+
+            // Check if the input is not a number
+            if (!/^\d*$/.test(value)) {
+                reportNumberInput.value = value.replace(/\D/g, ''); // Remove non-numeric characters
+                alert('يرجى إدخال أرقام فقط في حقل رقم البلاغ'); // Display error message
             }
         });
     });

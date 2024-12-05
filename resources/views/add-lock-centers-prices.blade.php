@@ -48,7 +48,7 @@
             <br>
             <div class="form-group">
       
-                <label for="price4"> ادخل السعراذا كانت المركبة معدات و خارج المنطقة</label>
+                <label for="price4"> ادخل السعراذا كانت المركبة معدات و داخل المنطقة</label>
                 
                 <input type="text" name="price_equipment_inside" class="form-control" required>
             </div>

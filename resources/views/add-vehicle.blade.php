@@ -16,14 +16,12 @@
                     <label for="vehicle_center">مركز المركبة</label>
                     <select class="form-select" name="vehicle_center_id" id="vehicle_center">
                         @foreach($vehicleCenters as $center) 
-                        @if(auth::user()->lock_center_id==  $center->id)
+                        @if(auth::user()->lock_center_id ==  $center->id )
                             <option value="{{ $center->id }}" @if(auth::user()->lock_center_id == $center->id) selected @endif> {{ $center->name }}  </option>
                         @endif
-                        {{-- @if(auth::user()->lock_center_id== 7)
-                            <option value="{{ $center->id }}" @if(auth::user()->lock_center_id== $center->id) selected @endif > @if($center->id =='7') {{ $center->name }} @endif </option>
-                        @endif --}}
-                        @if(auth::user()->lock_center_id== 0)
-                            <option value="{{ $center->id }}">@if($center->name != 'كل المدن'){{ $center->name }} @endif</option>
+                      
+                        @if(auth::user()->lock_center_id == 0)
+                            <option value="{{ $center->id }}"  @if(auth::user()->lock_center_id == $center->id) selected @endif>{{ $center->name }}</option>
                         @endif
                         @endforeach
                     </select>
@@ -31,22 +29,7 @@
                 
 
                 <br>
-                {{-- <div class="form-group">
-                    <select name="vehicle_center" class="form-select">
-                        @if(auth::user()->type=='مشرف المدينة')
-                        <option value="المدينة" selected>المدينة</option>
-                        @endif
-                        @if(auth::user()->type=='مشرف الشرقية')
-                        <option value="المنطقة الشرقية" selected>المنطقة الشرقية</option>
-                        @endif
-                        @if(auth::user()->type=='مشرف عام')
-                        <option value="المدينة" selected>المدينة</option>
-                        <option value="المنطقة الشرقية" >المنطقة الشرقية</option>
-                        @endif
-                    </select>
-                </div>
-                
-                <br> --}}
+               
                 <div class="form-group">
                     <label for="enter_date">تاريخ وزمن دخول المركبة</label>
                     <input type="datetime-local" name="enter_date" class="form-control" required>
@@ -69,7 +52,7 @@
                 <div class="form-group">
                     <label for="vehicle_number">رقم البلاغ</label>
                     <input type="text" id="report_number" name="report_number" class="form-control" required>
-                    {{-- <span id="report_number" class="text-danger"></span> --}}
+                   
                 </div>
                 <br>
                 <div class="form-group">
@@ -185,18 +168,7 @@
                 });
         }
 
-        // Check vehicle number uniqueness
-        // vehicleNumberInput.addEventListener('change', function() {
-        //     const vehicleNumber = this.value;
-        //     checkUniqueness('vehicle_number', vehicleNumber, function(isUnique) {
-        //         const vehicleNumberError = document.getElementById('vehicle_number_error');
-        //         if (!isUnique) {
-        //             vehicleNumberError.textContent = "رقم المركبة موجود بالفعل";
-        //         } else {
-        //             vehicleNumberError.textContent = "";
-        //         }
-        //     });
-        // });
+       
 
         // Check chassis number uniqueness
         chassisNumberInput.addEventListener('change', function() {
@@ -219,6 +191,21 @@
             if (vehicleNumberError || chassisNumberError) {
                 event.preventDefault(); // Prevent form submission
                 alert('يرجى تصحيح الأخطاء قبل المتابعة');
+            }
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const reportNumberInput = document.getElementById('report_number');
+
+        reportNumberInput.addEventListener('input', function () {
+            const reportNumber = this.value;
+
+            // Check if the value contains non-numeric characters
+            if (!/^\d*$/.test(reportNumber)) {
+                alert('يرجى إدخال أرقام فقط في حقل رقم البلاغ.');
+                this.value = reportNumber.replace(/\D/g, ''); // Remove non-numeric characters
             }
         });
     });
