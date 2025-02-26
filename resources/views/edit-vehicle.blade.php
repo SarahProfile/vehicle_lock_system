@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="content-page">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="content" >
         <div class="container">
             <div class="row justify-content-center">
@@ -90,6 +91,12 @@
                 </div>
                 <br>
                 <div class="form-group">
+                    <label for="vehicle_number">لون المركبة</label>
+                    <input type="text" id="vehicle_color" name="vehicle_color" class="form-control"  value="{{$vehicle->vehicle_color}}">
+                    <span id="vehicle_color" class="text-danger"></span>
+                </div>
+                <br>
+                <div class="form-group">
                     <label for="vehicle_number">رقم اللوحة</label>
                     <input type="text" name="vehicle_number" id="vehicle_number2" class="form-control" required value="{{$vehicle->vehicle_number}}">
                     <small id="vehicle_number_error" class="text-danger"></small>
@@ -140,10 +147,16 @@
              
                 <div class="form-group">
                     {{-- عرض الصور الحالية --}}
-                    <label>الصور الحالية للمركبة</label><br>
                     @foreach($vehicle->images as $image)
+                    <div class="image-container" style="display: inline-block; position: relative;">
                         <img src="{{ asset('images/'.$image->image_path) }}" alt="Vehicle Image" style="width:100px; height:100px;">
-                    @endforeach
+                        <button type="button" class="delete-image" data-id="{{ $image->id }}" 
+                                style="position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; border-radius: 50%;">
+                            X
+                        </button>
+                    </div>
+                @endforeach
+                
                     <br>
                 
                     {{-- إدخال صور جديدة --}}
@@ -338,4 +351,34 @@
             }
         });
     });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.delete-image').forEach(button => {
+        button.addEventListener('click', function () {
+            let imageId = this.getAttribute('data-id');
+            let imageContainer = this.parentElement;
+
+            if (confirm('هل أنت متأكد أنك تريد حذف هذه الصورة؟')) {
+                fetch(`/vehicle/image/${imageId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        imageContainer.remove(); // Remove image from UI
+                    } else {
+                        alert('خطأ: تعذر حذف الصورة.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    });
+});
+
 </script>

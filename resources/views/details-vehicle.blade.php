@@ -33,6 +33,10 @@
             <td>{{ $vehicle->lock_area }}</td>
         </tr>
         <tr>
+            <th>لون المركبة</th>
+            <td>{{ $vehicle->vehicle_color }}</td>
+        </tr>
+        <tr>
             <th>رقم اللوحة</th>
             <td>{{ $vehicle->vehicle_number }}</td>
         </tr>

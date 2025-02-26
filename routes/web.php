@@ -34,6 +34,7 @@ Route::post('/centers/prices/store', [CenterPriceController::class, 'store'])->n
 Route::put('/vehicles/{id}/exit', [VehicleController::class, 'submitExitForm'])->name('vehicle.submitExit');
 
 Route::get('/vehicles/{id}/calculate-price', [VehicleController::class, 'calculatePrice'])->name('vehicle.calculatePrice');
+Route::delete('/vehicle/image/{id}', [VehicleController::class, 'deleteImage'])->name('vehicle.image.delete');
 
 Route::prefix('admin')->group(function () {
     Route::get('home', [VehicleController::class, 'index'])->name('vehicle.search');

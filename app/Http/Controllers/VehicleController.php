@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Vehicle;
 use App\Models\VehicleCenter;
 use App\Models\VehicleCenterPrice;
+use App\Models\VehicleImage;
 
 class VehicleController extends Controller 
 {
@@ -138,6 +139,7 @@ class VehicleController extends Controller
         'vehicle_model' => 'required',
         'chassis_number' => 'required',
         'vehicle_type' => 'required',
+        'vehicle_color' => 'required',
         // 'exit_date'=>'required',
         'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', 
         'report_number' => 'required',
@@ -162,6 +164,23 @@ class VehicleController extends Controller
 
     return redirect()->route('home')->with('success', 'Vehicle added successfully  ' );
 }
+public function deleteImage($id)
+{
+    $image = VehicleImage::findOrFail($id); // Find the image by ID
+
+    // Remove file from the public/images folder
+    $imagePath = public_path('images/' . $image->image_path);
+    if (file_exists($imagePath)) {
+        unlink($imagePath); // Delete the file
+    }
+
+    // Delete image record from the database
+    $image->delete();
+
+    return response()->json(['success' => true, 'message' => 'Image deleted successfully']);
+}
+
+
 // public function showExitForm($id)
 // {
 //     $vehicle = Vehicle::findOrFail($id);
@@ -319,6 +338,7 @@ public function update(Request $request, $id)
         'vehicle_status' => 'nullable',
         'exit_date' => 'nullable|date',
         'report_number' => 'required',
+        'vehicle_color' => 'nullable',
         'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 

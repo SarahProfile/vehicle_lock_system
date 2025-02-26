@@ -20,7 +20,9 @@ class Vehicle extends Model
         'vehicle_type',
         'vehicle_price' ,// Add vehicle_price
         'vehicle_status',
-        'vehicle_center_id'
+        'vehicle_center_id',
+        'vehicle_color',
+        'discount'
     ];
 
     public function calculatePrice($exitDate)

@@ -36,6 +36,7 @@
                 </div>
                 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
                 <br>
+                
                 <div class="form-group">
                     <label for="lock_location">موقع الرفع</label>
                     <input type="text" name="lock_location" class="form-control" required>
@@ -49,10 +50,16 @@
                     </select>
                 </div>
                 <br>
+                
                 <div class="form-group">
                     <label for="vehicle_number">رقم البلاغ</label>
                     <input type="text" id="report_number" name="report_number" class="form-control" required>
                    
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="vehicle_color">لون المركبة</label>
+                    <input type="text" name="vehicle_color" class="form-control" >
                 </div>
                 <br>
                 <div class="form-group">
