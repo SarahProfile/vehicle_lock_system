@@ -17,6 +17,12 @@
         </div>
 
         <div class="form-group">
+            <label for="discount">الخصم (%)</label>
+            <input type="number" name="discount" id="discount" class="form-control" min="0" max="100" value="{{ old('discount', $vehicle->discount ?? 0) }}">
+        </div>
+        
+        <br>
+        <div class="form-group">
             <label for="vehicle_price">سعر الاخراج</label>
             <input type="text" id="vehicle_price" class="form-control" value="سيتم حساب السعر تلقائياً" readonly>
         </div>
@@ -104,50 +110,67 @@
     });
 </script> --}}
 <script>
-    // Pass the centerPrices data to JavaScript
+   document.addEventListener("DOMContentLoaded", function () {
+    const exitDateInput = document.getElementById("exit_date");
+    const discountInput = document.getElementById("discount");
+    const vehiclePriceField = document.getElementById("vehicle_price");
+    const exitDateField = document.getElementById("exitDateField");
+    const hoursField = document.getElementById("hoursField");
+    const priceField = document.getElementById("priceField");
+    const beforeVatField = document.getElementById("beforeVatField");
+    const afterVatField = document.getElementById("afterVatField");
+
+    const enterDate = new Date("{{ $vehicle->enter_date }}");
     const centerPrices = @json($centerPrices);
 
-    document.getElementById('exit_date').addEventListener('change', function() {
-        const exitDate = new Date(this.value);
-        const enterDate = new Date("{{ $vehicle->enter_date }}");
-
-        if (exitDate > enterDate) {
-            let hours = Math.abs(exitDate - enterDate) / 36e5;
-            hours = Math.ceil(hours); // Round up to the nearest hour
-
-            let pricePerHour = 0;
-
-            // Loop through centerPrices to find the matching one
-            centerPrices.forEach(centerPrice => {
-                if ("{{ $vehicle->vehicle_center_id }}" === centerPrice.center_id.toString()) {
-                    // Based on vehicle type and lock area, assign price
-                    if ("{{ $vehicle->vehicle_type }}" === 'صغيرة') {
-                        pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? centerPrice.price_small_inside : centerPrice.price_small_outside;
-                    } else if ("{{ $vehicle->vehicle_type }}" === 'كبيرة') {
-                        pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? centerPrice.price_big_inside : centerPrice.price_big_outside;
-                    } else if ("{{ $vehicle->vehicle_type }}" === 'المعدات') {
-                        pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? centerPrice.price_equipment_inside : centerPrice.price_equipment_outside;
-                    }
-                }
-            });
-
-            const totalPrice = (pricePerHour) + (2 * hours);
-            const totalPriceBeforeVat = totalPrice;
-            const totalPriceAfterVat = totalPriceBeforeVat + (0.15 * totalPriceBeforeVat);
-
-            // Update the table dynamically
-            document.getElementById('exitDateField').innerText = exitDate.toLocaleString();
-            document.getElementById('hoursField').innerText = hours + " ساعة";
-            document.getElementById('priceField').innerText = totalPrice + " ريال";
-            document.getElementById('beforeVatField').innerText = totalPriceBeforeVat.toFixed(2) + " ريال";
-            document.getElementById('afterVatField').innerText = totalPriceAfterVat.toFixed(2) + " ريال";
-
-            // Update the vehicle price input field
-            document.getElementById('vehicle_price').value = totalPriceAfterVat.toFixed(2) + " ريال";
-        } else {
-            alert('تاريخ الخروج يجب أن يكون بعد تاريخ الدخول');
+    function calculatePrice() {
+        const exitDate = new Date(exitDateInput.value);
+        if (isNaN(exitDate) || exitDate <= enterDate) {
+            alert("تاريخ الخروج يجب أن يكون بعد تاريخ الدخول");
+            return;
         }
-    });
+
+        let hours = Math.abs(exitDate - enterDate) / 36e5;
+        hours = Math.ceil(hours); // Round up to the next full hour
+
+        let pricePerHour = 0;
+        centerPrices.forEach(centerPrice => {
+            if ("{{ $vehicle->vehicle_center_id }}" === centerPrice.center_id.toString()) {
+                if ("{{ $vehicle->vehicle_type }}" === 'صغيرة') {
+                    pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? centerPrice.price_small_inside : centerPrice.price_small_outside;
+                } else if ("{{ $vehicle->vehicle_type }}" === 'كبيرة') {
+                    pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? centerPrice.price_big_inside : centerPrice.price_big_outside;
+                } else if ("{{ $vehicle->vehicle_type }}" === 'المعدات') {
+                    pricePerHour = ("{{ $vehicle->lock_area }}" === 'داخل المنطقة') ? centerPrice.price_equipment_inside : centerPrice.price_equipment_outside;
+                }
+            }
+        });
+
+        // Calculate total price
+        let hourlyCharge = pricePerHour * hours;
+        let totalPriceBeforeVat = hourlyCharge;
+        
+        // Apply discount
+        let discount = parseFloat(discountInput.value) || 0;
+        if (discount > 0 && discount <= 100) {
+            totalPriceBeforeVat -= (totalPriceBeforeVat * discount) / 100;
+        }
+
+        let totalPriceAfterVat = totalPriceBeforeVat + (0.15 * totalPriceBeforeVat);
+
+        // Update the UI
+        exitDateField.innerText = exitDate.toLocaleString();
+        hoursField.innerText = hours + " ساعة";
+        priceField.innerText = hourlyCharge.toFixed(2) + " ريال";
+        beforeVatField.innerText = totalPriceBeforeVat.toFixed(2) + " ريال";
+        afterVatField.innerText = totalPriceAfterVat.toFixed(2) + " ريال";
+        vehiclePriceField.value = totalPriceAfterVat.toFixed(2) + " ريال";
+    }
+
+    exitDateInput.addEventListener("change", calculatePrice);
+    discountInput.addEventListener("input", calculatePrice);
+});
+
 </script>
 
 

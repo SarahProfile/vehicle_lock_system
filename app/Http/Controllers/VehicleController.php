@@ -20,7 +20,7 @@ class VehicleController extends Controller
         $enterDate = $request->input('enter_date');
         $lockLoction = $request->input('lock_location');
         $vehicleStatusOrder = $request->input('vehicle_status_order'); // to manage the status order
-    $enterDateOrder = $request->input('enter_date_order', 'desc'); // Default to 'desc' for new to old
+        $enterDateOrder = $request->input('enter_date_order', 'desc'); // Default to 'desc' for new to old
         $locationOrder = $request->input('location_order'); // to manage lock location sorting
         
         // Fetch distinct lock locations from the vehicles table
@@ -143,6 +143,7 @@ class VehicleController extends Controller
         // 'exit_date'=>'required',
         'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', 
         'report_number' => 'required',
+        'discount' => 'required',
     ]);
 
    
@@ -228,30 +229,36 @@ public function submitExitForm(Request $request, $id)
     // Validate the input
     $request->validate([
         'exit_date' => 'required|date|after_or_equal:' . $vehicle->enter_date,
+        'discount' => 'nullable|numeric|min:0|max:100', // Validate discount percentage
     ]);
 
     // Update the exit date and status
     $vehicle->exit_date = $request->exit_date;
     $vehicle->vehicle_status = 'خرجت';
 
+    // Apply the discount if provided
+    $vehicle->discount = $request->discount ?? 0;
+
     // Calculate price logic here
-    $price = $this->calculateVehiclePrice($vehicle);
+    $price = $this->calculateVehiclePrice($vehicle, $vehicle->discount);
     $vehicle->vehicle_price = $price;
 
     $vehicle->save();
 
     return redirect()->route('home')->with('success', 'تم إخراج المركبة بنجاح');
-    //    return view('home', compact('vehicle'));
 }
 
-// Function to calculate the price based on your logic
+
+// Function to calculate the price based on your logic, including discount
 private function calculateVehiclePrice($vehicle)
 {
     $enter_date = new \DateTime($vehicle->enter_date);
     $exit_date = new \DateTime($vehicle->exit_date);
     $interval = $enter_date->diff($exit_date);
-    $centerPrice=VehicleCenterPrice::where('center_id',$vehicle->vehicle_center_id)->first();
-
+    
+    $centerPrice = VehicleCenterPrice::where('center_id', $vehicle->vehicle_center_id)->first();
+    $discount = $vehicle->discount; // Discount percentage (e.g., 10 for 10%)
+    
     // Calculate total hours
     $hours = ($interval->days * 24) + $interval->h;
     
@@ -260,31 +267,31 @@ private function calculateVehiclePrice($vehicle)
         $hours += 1;
     }
 
-    // Set price based on vehicle_type and lock_area
+    // Set price per hour based on vehicle_type and lock_area
     $price_per_hour = 0;
     if ($vehicle->vehicle_type === 'صغيرة') {
-        if ($vehicle->lock_area === 'داخل المنطقة') {
-            $price_per_hour = $centerPrice->price_small_inside;
-        } elseif ($vehicle->lock_area === 'خارج المنطقة') {
-            $price_per_hour = $centerPrice->price_small_outside;
-        }
+        $price_per_hour = ($vehicle->lock_area === 'داخل المنطقة') ? 
+            $centerPrice->price_small_inside : $centerPrice->price_small_outside;
     } elseif ($vehicle->vehicle_type === 'كبيرة') {
-        if ($vehicle->lock_area === 'داخل المنطقة') {
-            $price_per_hour = $centerPrice->price_big_inside;
-        } elseif ($vehicle->lock_area === 'خارج المنطقة') {
-            $price_per_hour = $centerPrice->price_big_outside;
-        }
+        $price_per_hour = ($vehicle->lock_area === 'داخل المنطقة') ? 
+            $centerPrice->price_big_inside : $centerPrice->price_big_outside;
     } elseif ($vehicle->vehicle_type === 'المعدات') {
-        if ($vehicle->lock_area === 'داخل المنطقة') {
-            $price_per_hour = $centerPrice->price_equipment_inside;
-        } elseif ($vehicle->lock_area === 'خارج المنطقة') {
-            $price_per_hour =  $centerPrice->price_equipment_outside;
-        }
+        $price_per_hour = ($vehicle->lock_area === 'داخل المنطقة') ? 
+            $centerPrice->price_equipment_inside : $centerPrice->price_equipment_outside;
     }
 
-    $total_price_befor_vat = ($price_per_hour) + (2 * $hours);
-    $total_price_after_vat = ($total_price_befor_vat) + (0.15 * $total_price_befor_vat);
-    // Total price (including an additional 2 per hour fee)
+    // Calculate total price before VAT
+    $total_price_before_vat = ($price_per_hour) + (2 * $hours);
+
+    // Apply discount if exists
+    if ($discount > 0) {
+        $discount_amount = ($total_price_before_vat * $discount) / 100;
+        $total_price_before_vat -= $discount_amount;
+    }
+
+    // Apply VAT (15%)
+    $total_price_after_vat = $total_price_before_vat + (0.15 * $total_price_before_vat);
+
     return $total_price_after_vat;
 }
 
@@ -339,6 +346,7 @@ public function update(Request $request, $id)
         'exit_date' => 'nullable|date',
         'report_number' => 'required',
         'vehicle_color' => 'nullable',
+        'discount' => 'nullable',
         'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
@@ -394,10 +402,11 @@ public function update(Request $request, $id)
      * Remove the specified vehicle from storage.
      */
     public function destroy($id)
-    {
-        $vehicle = Vehicle::find($id);
-        $vehicle->delete();
-        
-        return redirect()->route('home')->with('success', 'Vehicle deleted successfully.');
-    }
+{
+    $vehicle = Vehicle::findOrFail($id);
+    $vehicle->delete();
+
+    return redirect()->route('home')->with('success', 'تم حذف المركبة بنجاح.');
+}
+
 }

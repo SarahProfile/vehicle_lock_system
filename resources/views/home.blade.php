@@ -55,7 +55,7 @@
                                                     </button>
                                                 </th>
                                                 <th class="all">نوع المركبة</th>
-                                                <th class="all">لون المركبة</th>
+                                             
                                                 <th class="all">رقم اللوحة</th>
                                                 <th class="all">رقم الهيكل</th>
                                                 <th class="all">
@@ -80,7 +80,7 @@
                                                     <td>{{ $vehicle->id }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($vehicle->enter_date)->format('Y-m-d') }}</td>
                                                     <td>{{ $vehicle->vehicle_type }}</td>
-                                                    <td>{{ $vehicle->vehicle_color }}</td>
+                                                  
                                                     <td>{{ $vehicle->vehicle_number }}</td>
                                                     <td>{{ $vehicle->chassis_number }}</td>
                                                     <td>{{ $vehicle->lock_location }}</td>

@@ -74,6 +74,11 @@
             </td>
         </tr>
         <tr>
+            
+            <th>نسبة الخصم (%)</th>
+            <td>{{ $vehicle->discount}}</td>
+        </tr>
+        <tr>
             <th> أجرة الساعات</th>
             <td>
                 @php
@@ -81,20 +86,32 @@
                     $exitDate = \Carbon\Carbon::parse($vehicle->exit_date);
                     $hoursDifference = $exitDate->diffInMinutes($enterDate) / 60; // Calculate hours including minutes
                     $roundedHours = ceil($hoursDifference); // Round up to nearest hour
+                    $discount= $vehicle->discount;
                 @endphp
-                {{ $roundedHours* 2 }} ريال
+             @if($discount>0)
+             
+                {{ ((2 * $roundedHours) * (1 - ($discount) / 100))}} ريال
+             
+             @endif
+             @if($discount<=0)
+                {{(2 * $roundedHours) }} ريال
+             
+             @endif
+               
             </td>
         </tr>
         <tr>
             <th>أجرة السحب  </th>
             @php
-               $enterDate = \Carbon\Carbon::parse($vehicle->enter_date);
+                    $enterDate = \Carbon\Carbon::parse($vehicle->enter_date);
                     $exitDate = \Carbon\Carbon::parse($vehicle->exit_date);
                     $hoursDifference = $exitDate->diffInMinutes($enterDate) / 60; // Calculate hours including minutes
                     $roundedHours = ceil($hoursDifference); // Round up to nearest hour
-            $normalPrice = round(($vehicle->vehicle_price)/(1+0.15));
-            $fixedPrice = $normalPrice - (2*$roundedHours);
-              @endphp
+                    $normalPrice = round(($vehicle->vehicle_price)/(1+0.15));
+                    $discount= $vehicle->discount;
+                    $fixedPrice = $normalPrice - ((2 * $roundedHours) * (1 - ($discount) / 100));
+
+            @endphp
             <td>{{$fixedPrice}}</td>
         </tr>
         
@@ -126,6 +143,8 @@
         </tr>
     </table>
     <a href="{{ route('home') }}" class="btn btn-primary" style="background-color: #FC3D39; border-color:#E33437" >الرجوع</a>
+    <a href="{{ route('vehicle.destroy', $vehicle->id) }}" class="btn btn-primary"  style="background-color: #46C263; border-color:#53D769">حذف المركبة</a>
+
     @if(auth::user()->type!='مشاهد' && auth::user()->type!='مشاهد الشرقية' && auth::user()->type!='مشاهدالمدينة')
     <td class="table-action">
         <a href="{{ route('vehicle.edit', $vehicle->id) }}" class="btn btn-primary" >تعديل</a>
@@ -134,6 +153,7 @@
     <td class="table-action">
         <a href="{{ route('vehicle.exit', $vehicle->id) }}" class="btn btn-primary"  style="background-color: #46C263; border-color:#53D769">إخراج المركبة</a>
     </td>
+
     @endif
     @endif
 </div>

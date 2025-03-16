@@ -142,7 +142,11 @@
                       <input type="text" id="vehicle_price" name="vehicle_price" class="form-control" value="{{ $vehicle->vehicle_price }}" readonly>
                   </div>
                   <br>
-                  
+                  <div class="form-group">
+                    <label for="discount">نسبة الخصم (%)</label>
+                    <input type="number" id="discount" name="discount" class="form-control" min="0" max="100" value="{{ $vehicle->discount }}">
+                </div>
+                <br>
                   @endif
              
                 <div class="form-group">
@@ -193,7 +197,7 @@
         // Select the exit date input and the price input fields
         const exitDateInput = document.getElementById('exit_date');
         const priceInput = document.getElementById('vehicle_price');
-
+        const discountInput = document.getElementById('discount'); // New discount input field
         // Define the centerPrices data (assumed to be passed from the backend)
         const centerPrices = @json($centerPrices);
 
@@ -203,7 +207,8 @@
             const enterDate = new Date("{{ $vehicle->enter_date }}");
 
             // Get the selected exit date
-            const exitDate = new Date(exitDateInput.value);
+            const exitDate = new Date(exitDateInput.value); 
+           
 
             // Calculate the time difference in hours
             let timeDifference = (exitDate - enterDate) / (1000 * 60 * 60);
@@ -238,9 +243,15 @@
                 }
             });
 
-            // Add VAT (15%)
-            const priceAfterVAT = price + (price * 0.15);
+            
+            // Get discount value
+            let discountPercentage = parseFloat(discountInput.value) || 0;
+            let discountAmount = (price * discountPercentage) / 100;
+           // Calculate final price after discount
+            let priceAfterDiscount = price - discountAmount;
 
+            // Add VAT (15%)
+            const priceAfterVAT = priceAfterDiscount + (priceAfterDiscount * 0.15);
             // Update the price input field with the calculated price
             priceInput.value = priceAfterVAT.toFixed(2);
         });
@@ -364,7 +375,7 @@
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     }
                 })
                 .then(response => response.json())

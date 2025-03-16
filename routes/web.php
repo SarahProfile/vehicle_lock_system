@@ -10,6 +10,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 // Route to display the exit form
 Route::get('/vehicles/{id}/exit', [VehicleController::class, 'showExitForm'])->name('vehicle.exit');
@@ -21,6 +22,8 @@ Route::get('/users', [UserController::class, 'index'])->name('users.index');
 Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
 Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
 Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+// Route::delete('/admin/vehicles/delete/{id}',[VehicleController::class,'destroy'] )->name('vehicle.destroy');
+// Route::resource('/admin/vehicles',VehicleController::class);
 
 Route::get('/check-uniqueness', [VehicleController::class, 'checkUniqueness'])->name('vehicle.checkUniqueness');
 //// Route to submit the center form
@@ -50,3 +53,6 @@ Route::prefix('admin')->group(function () {
 
     });
 });
+
+
+
