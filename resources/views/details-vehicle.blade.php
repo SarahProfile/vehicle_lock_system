@@ -32,10 +32,10 @@
             <th>مكان السحب</th>
             <td>{{ $vehicle->lock_area }}</td>
         </tr>
-        <tr>
+        {{-- <tr>
             <th>لون المركبة</th>
             <td>{{ $vehicle->vehicle_color }}</td>
-        </tr>
+        </tr> --}}
         <tr>
             <th>رقم اللوحة</th>
             <td>{{ $vehicle->vehicle_number }}</td>

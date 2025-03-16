@@ -143,7 +143,7 @@ class VehicleController extends Controller
         // 'exit_date'=>'required',
         'vehicle_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', 
         'report_number' => 'required',
-        'discount' => 'required',
+        
     ]);
 
    
